@@ -53,6 +53,7 @@ footer{
 	height:768px;
 	background-repeat:no-repeat; 
 	background-size:1024px 768px;
+	overflow:hidden;
 }
 /*btn*/
 .buildBtn,.houseBtn,.finishBtn{
@@ -98,7 +99,32 @@ footer{
 }
 .textS{
 	font-size:25px;
-	margin:85px 0 0 35px;
+	margin:140px 0 0 -160px;
+}
+/*typewriter*/
+.textTypingL
+{
+    width: 400px;
+    white-space:nowrap;
+    overflow:hidden;
+    -webkit-animation: type 5s steps(50, end);
+    animation: type 5s steps(50, end);
+}
+.textTypingS
+{
+    width: 200px;
+    white-space:nowrap;
+    overflow:hidden;
+    -webkit-animation: type 1s steps(30, end);
+    animation: type 1s steps(30, end);
+}
+
+@keyframes type{
+    from { width: 0; }
+}
+
+@-webkit-keyframes type{
+    from { width: 0; }
 }
 /*email*/
 .emailForm{
@@ -306,8 +332,11 @@ footer{
 	background:transparent;
 }
 .progress-bar-core{
+	width:0%;
 	height:3px;
 	background:#B6CECE;
+	-webkit-transition: width 5.6s ease;
+	transition: width 5.6s ease;
 }
 /*infoB TAG*/
 .TagName{

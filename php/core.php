@@ -97,7 +97,7 @@ class PAD{
 						'<div class="infoABox">'.
                            self::box('infoA',$outcome['bname'],buildingType($outcome['cid']),$outcome['content'],$outcome['tag'],$tmp).
 						  '<div class="infoBBuilding"></div>
-						   <div class="infoABoxBottom">
+						   <div class="infoABoxBottom animated  bounceInRight">
 				              <div class="infoABuildingName" style="width:430px;">周遭分析 Analyze</div>
 				              <div class="infoABuildingContext" style="width:430px">
 							    <div class="infoABoxBottomBackground">
@@ -189,10 +189,10 @@ class PAD{
    }
    static function skewText($textSize,$textStr){
 	   //1=large 0=small
-	    return '<div class="textR '.($textSize==1?'textL':'textS').'">'.$textStr.($textSize==1?'':'次').'</div>';  	
+	    return '<div class="textR '.($textSize==1?'textL textTypingL':'textS').'">'.$textStr.($textSize==1?'':'次').'</div>';  	
    }
    static function box($infoType,$buildingName,$buildingType,$buildingContext,$buildingTag,$addition){
-	    return '<div class="'.$infoType.'Container">
+	    return '<div class="'.$infoType.'Container animated  bounceInRight">
 					<div class="'.$infoType.'BuildingName">'.$buildingName.'</div>
 					<div class="'.$infoType.'BuildingT">'.$buildingType.($addition==2?'<div style="float:right; color:#fff; margin-right:10px;">已入住<label class="coYellow">44</label>戶 尚餘<label class="coYellow">6666</label>戶</div>':'').'</div>
 					<div class="'.$infoType.'BuildingContext">'.$buildingContext.'</div>
@@ -222,7 +222,7 @@ class PAD{
 		         <label class="TagName">'.$name.'</label>
 	             <label class="TagNumber"> '.$number.'</label>
 		         <div class="progress">
-                   <div class="progress-bar progress-bar-core" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:'.$percent.'%;"></div>
+                   <div class="progress-bar progress-bar-core" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:'.$percent.'%;" value="'.$percent.'"></div>
                  </div>
 			   </div>';
 			  
