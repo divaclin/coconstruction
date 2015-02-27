@@ -96,7 +96,14 @@ class PAD{
 						'<div class="infoABox">'.
                            self::box('infoA',$outcome['bname'],buildingType($outcome['cid']),$outcome['content'],$outcome['tag'],$tmp).
 						  '<div class="infoBBuilding"></div>
-						   <div class="infoABoxBottom">'.self::infoARank().'</div>   
+						   <div class="infoABoxBottom">
+				              <div class="infoABuildingName" style="width:430px;">周遭分析 Analyze</div>
+				              <div class="infoABuildingContext" style="width:430px">
+							    <div class="infoABoxBottomBackground">
+							    '.self::infoARank().'
+								</div>
+							  </div>
+						   </div>   
 						</div>';
 		         break;
 		   case 'infoB':
@@ -197,7 +204,7 @@ class PAD{
 			if($i==3){
 				$tmp.='</div><div class="infoABoxBottomRight">';
 			}
-			$tmp.='<div style="margin-top:16px;">TAG'.$i.'</div>';
+			$tmp.='<div style="margin-top:16px;"><a>TAG'.$i.'</a></div>';
 		}
 		return $tmp.'</div>';
    }

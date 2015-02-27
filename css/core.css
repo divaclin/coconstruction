@@ -9,6 +9,10 @@ body{
 .coBlue{
 	color:#29ABE2;
 }
+a,a:hover{
+	text-decoration:none;
+	color:#29ABE2;
+}
 /*webpage*/
 header{
 	width:100%;
@@ -53,7 +57,7 @@ footer{
 /*btn*/
 .buildBtn,.houseBtn,.finishBtn{
 	float:right;
-	margin:57.5px 40px 0 0;
+	margin:30px 40px 0 0;
 	border : none;
 	width:180px; 
 	height:75px; 
@@ -83,18 +87,18 @@ footer{
 /*skew text*/
 .textR{
 	float:left; 
-    transform:skew(0,350deg);
+    -webkit-transform:skew(0,350deg);
 	color:#C4E4E8;
     text-shadow: 0px 0px 10px rgba(255,255,255,0.75);
 }
 .textL{
     letter-spacing:-5px;
-	font-size:75px;
-	margin:85px 0 0 20px;
+	font-size:70px;
+	margin:70px 0 0 20px;
 }
 .textS{
 	font-size:25px;
-	margin:105px 0 0 35px;
+	margin:85px 0 0 35px;
 }
 /*email*/
 .emailForm{
@@ -227,14 +231,15 @@ footer{
 .infoAContainer{
 	background-image:url('../img/infoBBox.png');
 	background-repeat:no-repeat; 
-	background-size:630px 350px; 
-	width:630px;
-	height:350px;
-	margin-top:-35px;
+	background-size:580px 325px; 
+	width:580px;
+	height:325px;
+	margin-top:-45px;
+	margin-right:5px;
 	float:right;
 }
 .infoABuildingName,.infoABuildingT,.infoABuildingContext{
-	width:550px;
+	width:500px;
 	margin-left:55px;
 	color:#fff;
 	padding-left:5px;
@@ -245,10 +250,10 @@ footer{
 	margin-top:5px;
 }
 .infoABuildingName{
-	height:50px;
+	height:40px;
 	background:#A94933;
-	margin-top:30px;
-	font-size:35px;
+	margin-top:15px;
+	font-size:30px;
 }
 .infoABuildingT{
 	height:30px;
@@ -257,28 +262,40 @@ footer{
 }
 .infoABuildingContext{
 	height:180px;
-	font-size:25px;
+	font-size:20px;
 }
 .infoABoxBottom{
-	background-image:url('../img/infoABoxBottom.png');
+	background-image:url('../img/infoBBox.png');
 	background-repeat:no-repeat; 
-	background-size:600px 258px; 
-	width:600px;
+	background-size:500px 258px; 
+	width:500px;
 	height:258px;
-	margin-top:3px;
+	margin-top:20px;
+	margin-right:5px;
 	float:right;
 	color:#29ABE2;	
 }
+.infoABoxBottomBackground{
+	margin-top:15px;
+    background-image:url('../img/infoATagRank.png');
+	background-repeat:no-repeat; 
+	background-size:430px 145px;
+	width:430px;
+	height:145px; 
+	float:left;	
+}
 .infoABoxBottomLeft{
+	font-size:16px;
 	width:130px;
 	height:150px;
-	margin:110px 0 0 190px;
+	margin:15px 0 0 100px;
 	float:left;
 }
 .infoABoxBottomRight{
+	font-size:16px;
 	width:130px;
 	height:150px;
-	margin:110px 0 0 20px;
+	margin:15px 0 0 20px;
 	float:left;
 }
 /*infoB*/
@@ -324,6 +341,7 @@ footer{
 	background-size:370px 570px; 
 	width:370px;
 	height:570px;
+	margin-right:-20px;
 	float:left;
 }
 .infoBBuildingRank{
