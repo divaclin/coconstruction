@@ -189,28 +189,28 @@ footer{
 	margin:25px 0 0 85px;
 }
 .buildFormName{
-	font-size:25px;
+	font-size:18px;
 	color:#fff;
 	background:#616D6D;
 	width:500px;
 	height:40px;
 	margin:5px auto;
 	border:0;
-	padding:0;
+	padding:5px;
 }
 .buildFormSelect{
-	font-size:18px;
+	font-size:16px;
 	width:500px;
 	height:30px;
 	color:#fff;
 	background:#434949;
 	border:0;
-	padding:0;
+	padding:5px;
 }
 .buildFormTextarea{
-	font-size:20px;
+	font-size:17px;
 	border:0;
-	padding:0;	
+	padding:3px;	
 	width:500px;
 	height:250px;
 	color:#fff;
@@ -218,13 +218,13 @@ footer{
 	margin:5px 0;
 }
 .buildFormTag{
-	font-size:25px;
+	font-size:18px;
 	width:500px;
 	height:40px;
 	background:#616D6D;
 	color:#29ABE2;
 	border:0;
-	padding:0;
+	padding:5px;
 }
 /*project*/
 .projectBox{
@@ -285,10 +285,13 @@ footer{
 	height:30px;
 	color:#29ABE2;
 	font-size:20px;
+	overflow-x:scroll;
+	overflow-y:hidden;
 }
 .infoABuildingContext{
 	height:180px;
 	font-size:20px;
+	overflow-y:scroll;
 }
 .infoABoxBottom{
 	background-image:url('../img/infoBBox.png');

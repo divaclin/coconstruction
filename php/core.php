@@ -74,7 +74,7 @@ class HTML{
 
 class PAD{
    static function Background($background){
-	   self::WhichBuilding();
+	  // self::WhichBuilding();
 	   echo'<article class="background" style="background-image:url(\'img/'.($background=='infoA'||$background=='build'||$background=='project'?'infoB':$background).'Background.png\');">'.
 		     self::Content($background)
 		   .'</article>';
@@ -83,19 +83,17 @@ class PAD{
 	   switch ($text){
 		   case 'email':
 		         return '<form class="emailForm" style="background-image:url(\'img/'.$text.'Box.png\');">
-				           <input class="emailText" type="text" name="emailUsr"     placeholder="&nbsp;&nbsp;請輸入姓名" style="margin-top:110px;">
-				           <input class="emailText" type="text" name="emailAddress" placeholder="&nbsp;&nbsp;請輸入email">
-				           <input class="emailBtn" type="submit" value="">
+				           <input required class="emailText" type="text" name="emailUsr"     placeholder="&nbsp;&nbsp;請輸入姓名" style="margin-top:110px;">
+				           <input required class="emailText" type="text" name="emailAddress" placeholder="&nbsp;&nbsp;請輸入email">
+				           <input class="emailBtn" type="button"  onclick="uploadEmail()">
 						 </form>';
 		         break;
 		   case 'infoA':
-		         $tmp='';
-				 $tmp=($_GET['type']==1?1:2);//1=facility 2=house 
 		         $outcome=self::WhichBuilding($_GET['bid']);
 				 return self::skewText(1,$outcome['bname']).
-					    self::rightTopBtn($tmp).
+					    self::rightTopBtn($outcome['type']).
 						'<div class="infoABox">'.
-                           self::box('infoA',$outcome['bname'],buildingType($outcome['cid']),$outcome['content'],$outcome['tag'],$tmp).
+                           self::box('infoA',$outcome['bname'],buildingType($outcome['cid']),$outcome['content'],$outcome['tag'],$outcome['type'],$outcome['reside'],$outcome['total']).
 						  '<div class="infoBBuilding"></div>
 						   <div class="infoABoxBottom animated  bounceInRight">
 				              <div class="infoABuildingName" style="width:430px;">周遭分析 Analyze</div>
@@ -114,7 +112,7 @@ class PAD{
 				             <div class="infoBTagRank">'.self::InfoBTagRank().'</div>
 							 <div class="infoBBuilding"></div>
 							 <div class="infoBBuildingRank">'.self::InfoBBuildingRank().'</div>'.
-                             self::box('infoB','Build Name','Building Type','Building Context','Building Tag',0).
+                             self::box('infoB','Build Name','Building Type','Building Context','Building Tag',0,0,0).
 						 '</div>';
 		         break;
 		   case 'infoC':
@@ -134,22 +132,22 @@ class PAD{
 						    <div class="infoBBuilding"></div>							
 							<div class="buildContainer">
 							     <form class="buildForm">
-								     <input class="buildFormName" type="text" placeholder="請輸入建築物名稱（限七字）..." maxlength="7" >
-									 <select class="buildFormSelect">
+								     <input class="buildFormName" name="buildingName" type="text" placeholder="請輸入建築物名稱（限七字）..." maxlength="7" >
+									 <select class="buildFormSelect" id="typeSelector">
 									   <option value="none">請選擇建物類型</option>
-									   <option value="活動類">活動類</option>
-									   <option value="服務及餐飲類">服務及餐飲類</option>
-									   <option value="工業類">工業類</option>
-									   <option value="休閒娛樂類">休閒娛樂類</option>
-									   <option value="宗教類">宗教類</option>
-									   <option value="運動類">運動類</option>
-									   <option value="法律及安全類">法律及安全類</option>
-									   <option value="自然類">自然類</option>
-									   <option value="交通類">交通類</option>
-									   <option value="教育類">教育類</option>
+									   <option value="1">活動類</option>
+									   <option value="2">服務及餐飲類</option>
+									   <option value="3">工業類</option>
+									   <option value="4">休閒娛樂類</option>
+									   <option value="5">宗教類</option>
+									   <option value="6">運動類</option>
+									   <option value="7">法律及安全類</option>
+									   <option value="8">自然類</option>
+									   <option value="9">交通類</option>
+									   <option value="10">教育類</option>
 									 </select>
-									 <textarea class="buildFormTextarea" placeholder="介紹一下你的建築物吧"></textarea>
-									 <input class="buildFormTag" type="text" placeholder="為你的建築物下標籤吧 如：#好高高 ＃巨X建築">
+									 <textarea class="buildFormTextarea" name="buildingContent" placeholder="介紹一下你的建築物吧"></textarea>
+									 <input class="buildFormTag" name="buildingTag" type="text" placeholder="為你的建築物下標籤吧 如：#水岸怒神 ＃大根君">
 								 </form>
 				            </div>
 						</div>';
@@ -163,7 +161,7 @@ class PAD{
 			               <div class="projectPop"><label>365</label></div>
 				           <div class="infoBBuilding"></div>
 				           <div class="infoBBuildingRank">'.self::InfoBBuildingRank().'</div>'.
-                           self::box('infoB','Build Name','Building Type','Building Context','Building Tag',0).   
+                           self::box('infoB','Build Name','Building Type','Building Context','Building Tag',0,0,0).   
 						'</div>';
 		         break;	 	 	 	  	 
 		   default:
@@ -174,10 +172,10 @@ class PAD{
 	   //0=完成 1=建造 2=入住
 	   switch($btnType){
 		   case 0:
-             return '<input class="finishBtn" type="button">';		     		   
+             return '<input class="finishBtn" type="button" onclick="finishBuilding()">';		     		   
 		     break;
 		   case 1:
-	         return '<input class="buildBtn" type="button">';		     
+	         return '<input class="buildBtn" type="button" onclick="buildBuilding()">';		     
 		     break;
 		   case 2:
              return '<input class="houseBtn" type="button">';		     
@@ -191,10 +189,10 @@ class PAD{
 	   //1=large 0=small
 	    return '<div class="textR '.($textSize==1?'textL textTypingL':'textS').'">'.$textStr.($textSize==1?'':'次').'</div>';  	
    }
-   static function box($infoType,$buildingName,$buildingType,$buildingContext,$buildingTag,$addition){
+   static function box($infoType,$buildingName,$buildingType,$buildingContext,$buildingTag,$addition,$addReside,$addTotal){
 	    return '<div class="'.$infoType.'Container animated  bounceInRight">
 					<div class="'.$infoType.'BuildingName">'.$buildingName.'</div>
-					<div class="'.$infoType.'BuildingT">'.$buildingType.($addition==2?'<div style="float:right; color:#fff; margin-right:10px;">已入住<label class="coYellow">44</label>戶 尚餘<label class="coYellow">6666</label>戶</div>':'').'</div>
+					<div class="'.$infoType.'BuildingT">'.$buildingType.($addition==2?'<div style="float:right; color:#fff; margin-right:10px;">已入住<label class="coYellow">'.$addReside.'</label>戶 尚餘<label class="coYellow">'.($addTotal-$addReside).'</label>戶</div>':'').'</div>
 					<div class="'.$infoType.'BuildingContext">'.$buildingContext.'</div>
 				    <div class="'.$infoType.'BuildingT">'.$buildingTag.'</div>
 				</div>';
@@ -254,14 +252,16 @@ class PAD{
 		      </div>';
    }
    static function WhichBuilding($bid){
-	   App::db_connect();
-	   $sql='SELECT * FROM user INNER JOIN building ON user.bid=building.bid WHERE user.bid=:bid';
-	   $stmt=App::$dbn->prepare($sql);
-	   $stmt->execute(array(
-		   ":bid"=>$bid
-	   ));
-	   $result=$stmt->fetch(PDO::FETCH_ASSOC);
-	   return $result;
+	   if(isset($bid)){
+	     App::db_connect();
+	     $sql='SELECT * FROM user INNER JOIN building ON user.bid=building.bid WHERE user.bid=:bid';
+	     $stmt=App::$dbn->prepare($sql);
+	     $stmt->execute(array(
+		    ":bid"=>$bid
+	     ));
+	     $result=$stmt->fetch(PDO::FETCH_ASSOC);
+	     return $result;
+       }
    }
 }
    

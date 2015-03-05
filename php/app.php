@@ -34,10 +34,14 @@ class App{
 	static function html_xl_nav(){
 		}
 	}
+	
 	function islogin(){
 		if(!isset($_SESSION['islogin']) || true!=$_SESSION['islogin']){
 			$url=App::HOST().'index.php';
 			App::header_location($url);
 			}	
-		}	
+		}
+    function isNotBlock(){
+		return (isset($_POST['block'])&&$_POST['block']==true);
+	}		
 ?>
