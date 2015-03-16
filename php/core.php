@@ -89,6 +89,7 @@ class PAD{
 						 </form>';
 		         break;
 		   case 'infoA':
+		         if(isset($_GET['bid'])){
 		         $outcome=self::WhichBuilding($_GET['bid']);
 				 return self::skewText(1,$outcome['bname']).
 					    self::rightTopBtn($outcome['type']).
@@ -104,6 +105,7 @@ class PAD{
 							  </div>
 						   </div>   
 						</div>';
+				 }
 		         break;
 		   case 'infoB':
 		         return  self::skewText(1,'Building Type').
