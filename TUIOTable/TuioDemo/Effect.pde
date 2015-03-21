@@ -1,61 +1,30 @@
-ArrayList<Effect> effect = new ArrayList<Effect>();
-
-//main effect function
-int myEffect(int ARnum,float objPos,float objSize){
-    for(int i = 0;i<effect.size();i++){
-       if(effect.get(i).ARnum==ARnum){
-          effect.get(i).show("none");
-          return 1;
-       }
-    }
-    switch (ARnum%10){
-      case 0:
-      case 8:
-      case 1:
-      case 4:
-      case 5:
-          effect.add(new Twinkle(ARnum,objPos+objSize/2,objSize));
-          break;  
-      case 3:    
-      case 6:
-          effect.add(new Particle(ARnum,objPos+objSize/2,objSize));
-          break;
-      case 9:
-      case 2:   
-      case 7:
-          effect.add(new Ripples(ARnum,objPos+objSize/2,objSize));
-          break;
-      default:
-           break;
-    }
-    return 0;
-}
-
-
 //super class
 class Effect{
       int ARnum;
       float objPos;
       float objSize;
+      String colorStr;
       
-      Effect(int _num,float _pos, float _size){
+      Effect(int _num,float _pos, float _size,String _colorStr){
          this.ARnum=_num;
          this.objPos=_pos;
          this.objSize=_size;
+         this.colorStr=_colorStr;
       }
-      void show(String colorStr){
+      void show(){
       }
+      
 }
 //child belows
 class Twinkle extends Effect{
     float twinkleLine;
     
-    Twinkle(int ARnum,float objPos,float objSize){
-      super(ARnum,objPos,objSize);  
+    Twinkle(int ARnum,float objPos,float objSize,String colorStr){
+      super(ARnum,objPos,objSize,colorStr);  
       this.twinkleLine=0;
     }
     
-    void show(String colorStr){
+    void show(){
        smooth();
        fill(0,50);
        strokeWeight(1);
@@ -73,8 +42,8 @@ class Particle extends Effect{
     Dot[] dots;
     float diameter;
           
-    Particle(int ARnum,float objPos,float objSize){
-     super(ARnum,objPos,objSize); 
+    Particle(int ARnum,float objPos,float objSize,String colorStr){
+     super(ARnum,objPos,objSize,colorStr); 
      this.totalDots = 100;
      this.dots = new Dot[totalDots];
      this.diameter = 12.0;
@@ -88,7 +57,7 @@ class Particle extends Effect{
            dots[i] = d;
        }
     }
-    void show(String colorStr){
+    void show(){
           float r = 255;
           float g = 255;
           float b = 255;
@@ -117,8 +86,8 @@ class Ripples extends Effect{
     int alphaS;
     Ripple[] ripple;
     
-    Ripples(int ARnum ,float objPos,float objSize){
-     super(ARnum,objPos,objSize);
+    Ripples(int ARnum ,float objPos,float objSize,String colorStr){
+     super(ARnum,objPos,objSize,colorStr);
      this.totalRipple = 5;
      this.diaIncreaseRate = 1;
      this.strokeDecreaseRate = 2;
@@ -129,7 +98,7 @@ class Ripples extends Effect{
          this.ripple[i] = new Ripple(this.objPos,this.objPos,i*20,(i+1)*10-9,int(random(0,255)),int(random(0,255)),int(random(0,255)),alphaS);
        }
     }
-    void show(String colorStr){
+    void show(){
       for(int i=0; i<this.totalRipple; i++){
         if(this.ripple[i].sw==0){
           this.ripple[i].x = this.objPos;

@@ -14,6 +14,8 @@ float fixedY=1.3;
 float obj_size;
 float cur_size;
 
+float currentX;
+float currentY;
 
 boolean verbose = false; // print console debug messages
 boolean callback = false; // updates only after callbacks
@@ -56,9 +58,23 @@ void draw(){
 
 void ShowTuioObject(){
   tuioObjectList = tuioClient.getTuioObjectList();
-  api.currentTableStat(); 
+  api.currentTableStat();
+  for (int i=0;i<tuioObjectList.size();i++) {
+     TuioObject tobj = tuioObjectList.get(i);
+     
+     stroke(0);
+     fill(255);
+     pushMatrix();
+     translate((width-tobj.getScreenX(width))*fixedX,tobj.getScreenY(height)*fixedY);
+     rotate(tobj.getAngle());
+    // rect(-obj_size/2,-obj_size/2,obj_size,obj_size);
+     myEffect(tobj.getSymbolID(),-obj_size/2,obj_size);     
+     popMatrix();
+     fill(255);
+     
+     text(""+tobj.getSymbolID(), width-tobj.getScreenX(width), tobj.getScreenY(height));
+   }  
 }
-
 void ShowTuioCursor(){
    ArrayList<TuioCursor> tuioCursorList = tuioClient.getTuioCursorList();
    for (int i=0;i<tuioCursorList.size();i++) {

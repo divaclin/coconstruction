@@ -10,12 +10,10 @@ class API{
      //time control 
      final int initTime = 10000;
      final int requestTime = 5000;
-     final int selectTime = 200;
+     final int selectTime =200;
      final int buildingTime =3000;
-     final int showTime = 200;
      
      HashMap<Integer,String> TuioObjStatus = new HashMap<Integer,String>(); //building stat  
-     ArrayList<Effect> effect = new ArrayList<Effect>();
   
      JSONArray json;
      
@@ -25,6 +23,7 @@ class API{
      int currentTime;
      int lastTime;
      
+     ArrayList<Effect> effect = new ArrayList<Effect>();
 
      
      API(){
@@ -46,9 +45,9 @@ class API{
               break;
          default:
               break;
-              
        }
-       this.tableShow();
+       //this.tableShow();
+       
      }
      void tableInit(){
           if(this.currentTime-this.lastTime<=initTime){
@@ -129,65 +128,31 @@ class API{
              TuioObjStatus.put((Integer)me.getKey(),"CHECKED");
           }
      }
-     int tableShow(){
-         for (int j=0;j<tuioObjectList.size();j++) {
-              TuioObject tobj = tuioObjectList.get(j);
-              if(TuioObjStatus.get(tobj.getSymbolID())!=null){
-                 if(TuioObjStatus.get(tobj.getSymbolID()).equals("SELECT") || TuioObjStatus.get(tobj.getSymbolID()).equals("INIT")){
-                   float currentX=(width-tobj.getScreenX(width))*fixedX;
-                   float currentY=tobj.getScreenY(height)*fixedY;
-                   for(int i = 0;i<this.effect.size();i++){
-                       println("show effect");
-                       if(this.effect.get(i).ARnum==tobj.getSymbolID()){
-                          
-                          if(this.currentTime-this.lastTime>=showTime){
-                            saveStrings("data/building_select.json",loadStrings(this.path+"tableFindBuilding.php?bid="+tobj.getSymbolID()+"&x="+currentX+"&y="+currentY));
-                            this.json=loadJSONArray("data/building_select.json");
-                            this.lastTime=this.currentTime;
-                          }
-                          
-                          stroke(0);
-                          fill(255);
-                          pushMatrix();
-                          translate(currentX,currentY);
-                          rotate(tobj.getAngle()); 
-                          this.effect.get(i).show();
-                          popMatrix();
-                          fill(255);
-                  
-                          text(""+tobj.getSymbolID(), width-tobj.getScreenX(width), tobj.getScreenY(height));
-                          return 1;
-                       }
-                   }
-                   
-                   if(this.currentTime-this.lastTime>=showTime){
-                      saveStrings("data/building_select.json",loadStrings(this.path+"tableFindBuilding.php?bid="+tobj.getSymbolID()+"&x="+currentX+"&y="+currentY));
-                      this.json=loadJSONArray("data/building_select.json");
-                      this.lastTime=this.currentTime;
-                   } 
-                   
-                   JSONObject tmp=this.json.getJSONObject(0);//error if not find
-                   println(tmp.getString("color"));
-                   if(tmp!=null){
-                      switch(tmp.getInt("eid")){
-                          case 1:
-                               this.effect.add(new Twinkle(tobj.getSymbolID(),0,obj_size,tmp.getString("color")));
+     void tableShow(){
+          for(Map.Entry me : TuioObjStatus.entrySet()){
+              if(me.getValue().equals("SELECT")||me.getValue().equals("INIT")){
+                if(this.effect.indexOf((Integer)me.getKey())==-1){
+                   saveStrings("data/building_select.json",loadStrings(this.path+"tableFindBuilding.php?bid="+this.effect.indexOf((Integer)me.getKey())));
+                   this.json=loadJSONArray("data/building_select.json");
+                   JSONObject tmp=this.json.getJSONObject(i);
+                   switch(tmp.getInt("eid")){
+                         case 1:
+                               this.effect.add(new Twinkle((Integer)me.getKey(),objPos+objSize/2,objSize,tmp.getString("color")));
                                break;
-                          case 2:
-                               this.effect.add(new Particle(tobj.getSymbolID(),0,obj_size,tmp.getString("color")));
+                         case 2:
+                               this.effect.add(new Particle((Integer)me.getKey(),objPos+objSize/2,objSize,tmp.getString("color")));
                                break;
-                          case 3:
-                               this.effect.add(new Ripples(tobj.getSymbolID(),0,obj_size,tmp.getString("color")));
+                         case 3:
+                               this.effect.add(new Ripples((Integer)me.getKey(),objPos+objSize/2,objSize,tmp.getString("color")));
                                break;
-                          default:
-                             println("default");
+                         default:
                              break;
-                     }
-                     return 0;
                    }
-                 }
-              }          
-         }
-         return -1;
+                }  
+                else{
+                  this.effect.get(this.effect.indexOf((Integer)me.getKey())).show();
+                }
+              }
+          }
      }
 }
