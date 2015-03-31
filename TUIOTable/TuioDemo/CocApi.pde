@@ -8,11 +8,13 @@ class API{
      final String attribute = "?bid=";
      
      //time control 
-     final int initTime = 10000;
+     final int initTime = 7000;
      final int requestTime = 5000;
      final int selectTime = 200;
-     final int buildingTime =3000;
+     final int buildingTime =15000;
      final int showTime = 200;
+     
+     int updateId;
      
      HashMap<Integer,String> TuioObjStatus = new HashMap<Integer,String>(); //building stat  
      ArrayList<Effect> effect = new ArrayList<Effect>();
@@ -23,13 +25,26 @@ class API{
      
      //time control
      int currentTime;
+     
+     
      int lastTime;
      
+     int initLast;
+     int requestLast;
+     int selectLast;
+     int buildingLast;
+     int showLast;
 
      
      API(){
        this.stat=this.BUILD_INIT;
        this.lastTime=0;
+       this.updateId=0;
+       this.initLast=0;
+       this.requestLast=0;
+       this.selectLast=0;
+       this.buildingLast=0;
+       this.showLast=0;
      }
      void currentTableStat(){
        this.currentTime=millis();
@@ -51,7 +66,7 @@ class API{
        this.tableShow();
      }
      void tableInit(){
-          if(this.currentTime-this.lastTime<=initTime){
+          if(this.currentTime-this.initLast<=initTime){
              for(int i=0;i<tuioObjectList.size();i++){
                  TuioObject tobj = tuioObjectList.get(i);
                  if(this.TuioObjStatus.get(tobj.getSymbolID())==null){
@@ -61,20 +76,22 @@ class API{
               println("initializing...");
           }
           else{
-             this.lastTime=this.currentTime;
+             this.initLast=this.currentTime;
              this.stat=BUILD_PROCESSING;
              println(this.TuioObjStatus);
              println("initialize completely");
           }
      }
      void dataFromDB(){
-           if(this.currentTime-this.lastTime>=requestTime){
+           if(this.currentTime-this.requestLast>=requestTime){
               saveStrings("data/db_stat.json",loadStrings(this.path+"tableConnect.php?block=true"));
               this.json=loadJSONArray("data/db_stat.json");
-              this.lastTime=this.currentTime;
+              this.requestLast=this.currentTime;
               for(int i=0; i< this.json.size();i++){
                   JSONObject tmp=this.json.getJSONObject(i);
-                  if(tmp.getString("behavior").equals("BUILD_UP")){
+                  if(tmp.getString("behavior").equals("BUILD_UP") && !tmp.getString("done").contains("D")){
+                    this.updateId=tmp.getInt("statusid");
+                    this.buildingLast=this.currentTime;
                     this.stat=BUILD_BUILDING;
                     break;
                  }
@@ -83,10 +100,10 @@ class API{
            println("PROCESSING");
      }
      void tableSelect(){
-          if(this.currentTime-this.lastTime>=selectTime){
+          if(this.currentTime-this.selectLast>=selectTime){
             println("SELECT");
             if(tuioObjectList.size()<TuioObjStatus.size()){
-               this.lastTime=this.currentTime;
+               this.selectLast=this.currentTime;
                ArrayList<Integer> List   = new ArrayList<Integer>();
                ArrayList<Integer> Status = new ArrayList<Integer>();
                
@@ -105,12 +122,16 @@ class API{
           }
      }
      void tableBuild(){
-          if(this.currentTime-this.lastTime<=buildingTime){
+          fill(255);
+          text("建造倒數"+abs(15000-(this.currentTime-this.buildingLast))/1000,50,50);
+          if(this.currentTime-this.buildingLast<=buildingTime){
              for(int i=0;i<tuioObjectList.size();i++){
                  TuioObject tobj = tuioObjectList.get(i);
                  if(TuioObjStatus.get(tobj.getSymbolID())==null){
+                    saveStrings("data/db_stat_update.json",loadStrings(this.path+"tableUpdate.php?block=true&id="+this.updateId));
+                    saveStrings("data/db_building_new.json",loadStrings(this.path+"tableNew.php?block=true&bid="+tobj.getSymbolID()));                    
                     println(tobj.getSymbolID());
-                    this.clearSelect();
+                    this.clearSelect();                
                     TuioObjStatus.put(tobj.getSymbolID(),"SELECT");
                     this.stat=BUILD_PROCESSING;
                     break;
@@ -119,8 +140,9 @@ class API{
             println("WAIT FOR BUILDING...");
          }
          else{
+            saveStrings("data/db_stat_update.json",loadStrings(this.path+"tableUpdate.php?block=true&id="+this.updateId));
             println("TIME EXCESSED");
-            this.lastTime=this.currentTime;
+            this.buildingLast=this.currentTime;
             this.stat=BUILD_PROCESSING;
          }
      }
@@ -140,10 +162,10 @@ class API{
                        println("show effect");
                        if(this.effect.get(i).ARnum==tobj.getSymbolID()){
                           
-                          if(this.currentTime-this.lastTime>=showTime){
+                          if(this.currentTime-this.showLast>=showTime){
                             saveStrings("data/building_select.json",loadStrings(this.path+"tableFindBuilding.php?bid="+tobj.getSymbolID()+"&x="+currentX+"&y="+currentY));
                             this.json=loadJSONArray("data/building_select.json");
-                            this.lastTime=this.currentTime;
+                            this.showLast=this.currentTime;
                           }
                           
                           stroke(0);
@@ -160,31 +182,33 @@ class API{
                        }
                    }
                    
-                   if(this.currentTime-this.lastTime>=showTime){
+                   if(this.currentTime-this.showLast>=showTime){
                       saveStrings("data/building_select.json",loadStrings(this.path+"tableFindBuilding.php?bid="+tobj.getSymbolID()+"&x="+currentX+"&y="+currentY));
                       this.json=loadJSONArray("data/building_select.json");
-                      this.lastTime=this.currentTime;
+                      this.showLast=this.currentTime;
                    } 
                    
                    JSONObject tmp=this.json.getJSONObject(0);//error if not find
-                   println(tmp.getString("color"));
-                   if(tmp!=null){
-                      switch(tmp.getInt("eid")){
-                          case 1:
-                               this.effect.add(new Twinkle(tobj.getSymbolID(),0,obj_size,tmp.getString("color")));
-                               break;
-                          case 2:
-                               this.effect.add(new Particle(tobj.getSymbolID(),0,obj_size,tmp.getString("color")));
-                               break;
-                          case 3:
-                               this.effect.add(new Ripples(tobj.getSymbolID(),0,obj_size,tmp.getString("color")));
-                               break;
-                          default:
-                             println("default");
-                             break;
-                     }
-                     return 0;
-                   }
+                   //if(tmp.getString("color")!=null){
+                      //println(tmp.getString("color"));
+                      if(tmp!=null){
+                         switch(tmp.getInt("eid")){
+                                case 1:
+                                      this.effect.add(new Twinkle(tobj.getSymbolID(),0,obj_size,tmp.getString("color")));
+                                      break;
+                                case 2:
+                                      this.effect.add(new Particle(tobj.getSymbolID(),0,obj_size,tmp.getString("color")));
+                                      break;
+                                case 3:
+                                      this.effect.add(new Ripples(tobj.getSymbolID(),0,obj_size,tmp.getString("color")));
+                                      break;
+                                default:
+                                      println("default");
+                                      break;
+                         }
+                         return 0;
+                      }
+                   //}
                  }
               }          
          }

@@ -22,5 +22,5 @@
 	     ));
 		 $result=$stmt->fetch(PDO::FETCH_ASSOC);
 		 echo $result['bid'];
-     }
+	 }
 ?>

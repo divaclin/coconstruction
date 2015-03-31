@@ -49,11 +49,15 @@ class HTML{
                 <link rel="stylesheet" href="css/core.css">				
                 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-				<script src="js/core.js"></script>'.
-				
-				($page!='0'?'<link rel="stylesheet" href="css/'.$page.'.css">
-					         <script type="text/javascript" src="js/'.$page.'.js"></script>':'')
-             .'</head>';
+				<script src="js/core.js"></script>
+			</head>';
+	}
+	static function CustomizeImg(){
+		echo '<canvas id="canvas" width="1769" height="652"></canvas>
+			  <div style="margin:0 auto; text-align:center;">
+			    <label>userID: <input id="customizeUser" type="text"></label>
+		        <button class="btn btn-primary margin-left:10px;" onclick="createImage()">generate</button>
+			  </div>';
 	}
 	static function Header(){
 		echo '<header>
@@ -86,25 +90,26 @@ class PAD{
 				           <input required class="emailText" type="text" name="emailUsr"     placeholder="&nbsp;&nbsp;請輸入姓名" style="margin-top:110px;">
 				           <input required class="emailText" type="text" name="emailAddress" placeholder="&nbsp;&nbsp;請輸入email">
 				           <input class="emailBtn" type="button"  onclick="uploadEmail()">
-						 </form>';
+						 </form>
+						 <div class="modal fade">
+						   <div class="modal-dialog">
+						     <div class="modal-content">
+						       <p class="returnId" ></p>
+						     </div>
+						   </div>
+						 </div>';
 		         break;
 		   case 'infoA':
 		         if(isset($_GET['bid'])){
 		         $outcome=self::WhichBuilding($_GET['bid']);
 				 return self::skewText(1,$outcome['bname']).
 					    self::rightTopBtn($outcome['type']).
-						'<div class="infoABox">'.
-                           self::box('infoA',$outcome['bname'],buildingType($outcome['cid']),$outcome['content'],$outcome['tag'],$outcome['type'],$outcome['reside'],$outcome['total']).
-						  '<div class="infoBBuilding"></div>
-						   <div class="infoABoxBottom animated  bounceInRight">
-				              <div class="infoABuildingName" style="width:430px;">周遭分析 Analyze</div>
-				              <div class="infoABuildingContext" style="width:430px">
-							    <div class="infoABoxBottomBackground">
-							    '.self::infoARank().'
-								</div>
-							  </div>
-						   </div>   
-						</div>';
+						'<div class="infoABox">
+ 						   <div class="infoABoxBottom">
+ 							    '.self::infoARank().'
+ 						   </div>   
+		  				   <div class="infoBBuilding"></div>'.                          self::box('infoA',$outcome['bname'],buildingType($outcome['cid']),$outcome['content'],$outcome['tag'],$outcome['type'],$outcome['reside'],$outcome['total']).	   
+						'</div>';
 				 }
 		         break;
 		   case 'infoB':
@@ -205,7 +210,9 @@ class PAD{
 			if($i==3){
 				$tmp.='</div><div class="infoABoxBottomRight">';
 			}
-			$tmp.='<div style="margin-top:16px;"><a>TAG'.$i.'</a></div>';
+			$tmp.='<div style="margin-top:3px; margin-left:'.($i*7).'px;"><a>TAG'.$i.'</a><label style="margin-left:10px; color:#C4E4E8;">number次</label><div class="progress" style="margin:-5px 0 0 0;">
+                   <div class="progress-bar progress-bar-core" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:'.($i*12).'%;" value="'.($i*12).'"></div>
+                 </div></div>';
 		}
 		return $tmp.'</div>';
    }

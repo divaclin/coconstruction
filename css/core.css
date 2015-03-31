@@ -1,4 +1,7 @@
 /*common*/
+::-webkit-scrollbar { 
+    display: none; 
+}
 body{
 	font-family:"LiHei Pro","Helvetica Neue","Helvetica","Arial","sans-serif";
     font-weight:200;	
@@ -168,6 +171,21 @@ footer{
 	color:transparent;
 	margin:20px auto;
 }
+.modal-content{
+	height:300px; 
+	background-color:rgba(255,255,255,0);
+	background-repeat:no-repeat; 
+    background-size:600px 300px; 
+	background-image:url('../img/emailReturn.png'); 
+	background-position:50% 50% ;
+}
+.returnId{
+	color:#E2E95F;
+	text-align:center;
+	margin:0 auto;
+	font-size:40px;
+	margin-top:130px;
+}
 /*build*/
 .buildBox{
 	float:left;
@@ -191,7 +209,7 @@ footer{
 .buildFormName{
 	font-size:18px;
 	color:#fff;
-	background:#616D6D;
+	background:#3B6979;
 	width:500px;
 	height:40px;
 	margin:5px auto;
@@ -203,7 +221,7 @@ footer{
 	width:500px;
 	height:30px;
 	color:#fff;
-	background:#434949;
+	background:#214A51;
 	border:0;
 	padding:5px;
 }
@@ -214,14 +232,14 @@ footer{
 	width:500px;
 	height:250px;
 	color:#fff;
-	background:#616D6D;
+	background:#3B6979;
 	margin:5px 0;
 }
 .buildFormTag{
 	font-size:18px;
 	width:500px;
 	height:40px;
-	background:#616D6D;
+	background:#3B6979;
 	color:#29ABE2;
 	border:0;
 	padding:5px;
@@ -257,29 +275,31 @@ footer{
 .infoAContainer{
 	background-image:url('../img/infoBBox.png');
 	background-repeat:no-repeat; 
-	background-size:580px 325px; 
-	width:580px;
-	height:325px;
-	margin-top:-45px;
+	background-size:600px 340px; 
+	width:600px;
+	height:340px;
+	margin-top:20px;
 	margin-right:5px;
 	float:right;
+	overflow-x:hidden;
 }
 .infoABuildingName,.infoABuildingT,.infoABuildingContext{
-	width:500px;
+	width:520px;
 	margin-left:55px;
 	color:#fff;
 	padding-left:5px;
 	font-weight:100;
 }
 .infoABuildingT,.infoABuildingContext{
-	background:#48646F;
+	background:#3B6979;
 	margin-top:5px;
 }
 .infoABuildingName{
 	height:40px;
-	background:#A94933;
-	margin-top:15px;
+	background:#CF4E34;
+	margin-top:25px;
 	font-size:30px;
+	overflow-y:hidden;
 }
 .infoABuildingT{
 	height:30px;
@@ -294,37 +314,28 @@ footer{
 	overflow-y:scroll;
 }
 .infoABoxBottom{
-	background-image:url('../img/infoBBox.png');
+	background-image:url('../img/infoAAnalyze.png');
 	background-repeat:no-repeat; 
-	background-size:500px 258px; 
-	width:500px;
-	height:258px;
-	margin-top:20px;
+	background-size:561px 187px; 
+	width:561px;
+	height:187px;
+	margin-top:0px;
 	margin-right:5px;
 	float:right;
 	color:#29ABE2;	
 }
-.infoABoxBottomBackground{
-	margin-top:15px;
-    background-image:url('../img/infoATagRank.png');
-	background-repeat:no-repeat; 
-	background-size:430px 145px;
-	width:430px;
-	height:145px; 
-	float:left;	
-}
 .infoABoxBottomLeft{
 	font-size:16px;
-	width:130px;
+	width:250px;
 	height:150px;
-	margin:15px 0 0 100px;
+	margin:25px 0 0 6px;
 	float:left;
 }
 .infoABoxBottomRight{
 	font-size:16px;
-	width:130px;
+	width:250px;
 	height:150px;
-	margin:15px 0 0 20px;
+	margin:25px 0 0 -6px;
 	float:left;
 }
 /*infoB*/
@@ -401,7 +412,7 @@ footer{
 	font-weight:100;
 }
 .infoBBuildingT,.infoBBuildingContext{
-	background:#48646F;
+	background:#3B6979;
 	margin-top:5px;
 }
 .infoBBuildingName{

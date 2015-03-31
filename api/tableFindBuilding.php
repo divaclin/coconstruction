@@ -17,6 +17,12 @@
 		   ':bid'=>$_GET['bid']
        ));
        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
-       echo json_encode($result);
+	   
+	   if(empty($result)){
+		   echo '[{"none":"0"}]';
+	   }
+       else{
+		   echo json_encode($result);
+	   }
     }
 ?>
