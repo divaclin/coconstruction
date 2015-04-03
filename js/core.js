@@ -5,14 +5,35 @@ $(window).load(function(){
 });
 
 $(document).ready(function(){
-	$('footer').css("margin-top",$(window).height());//html
+	$('footer').css("margin-top",$(window).height());
 	createImage();
 });
 
 $(window).resize(function(){
-	$('footer').css("margin-top",$(window).height());//html
+	$('footer').css("margin-top",$(window).height());
 });
 
+function startTime(second) {
+    document.getElementById('tmpClock').innerHTML = parseInt(second);
+	if(second>0){
+		$.post("php/selectStatus.php",{block:true}).done(function (data){
+			var json=$.parseJSON(data);
+			for(var i=0; i<json.length;i++){
+				if(json[i]['device']=='D' && json[i]['behavior']=='BUILD_UP_return' && json[i]['done'].indexOf('Z')==-1){
+				   var bid=	$.parseJSON(json[i]['object']);
+		   		   $.post("php/updateUser.php",{uid:sessionStorage.getItem('USERID'),bid:bid['bid'],block:true}).done(function (data){
+					      sessionStorage.setItem('BUILDINGID',bid['bid']);
+						  window.location.href ='build.php';
+				   });
+				}
+			}
+		});	
+       var t = setTimeout(function(){startTime(second-.2)},200);
+    }
+	else{
+		history.back();	
+	}
+}
 
 function uploadEmail(){
 	var usr=document.getElementsByName("emailUsr")[0].value;
@@ -22,7 +43,6 @@ function uploadEmail(){
 		$('.returnId').empty()
 		$('.returnId').append('<label>'+$.parseJSON(data)+'</label>');
 		$('.modal').modal('toggle');
-		//alert('login success!! your ID is '+$.parseJSON(data));
     });	
 }
 function buildBuilding(){
@@ -35,7 +55,7 @@ function buildBuilding(){
 				else{
 					$.post('php/statusBuildup.php',{uuid:userId,block:true}).done(function(data){});
 					sessionStorage.setItem("USERID", data);
-					window.location.href ='build.php';
+					window.location.href ='count.php';
 				}
 			});
 	    }
@@ -49,12 +69,10 @@ function finishBuilding(){
 	var buildingContent=document.getElementsByName("buildingContent")[0].value;
 	var buildingTag=document.getElementsByName("buildingTag")[0].value;
     
-	$.post('php/createBuilding.php',{bname:buildingName,cid:buildingType,content:buildingContent,tag:buildingTag,block:true}).done(function(bid){
-		sessionStorage.setItem("BID",bid);
-		$.post('php/updateUser.php',{uid:sessionStorage.getItem("USERID"),bid:sessionStorage.getItem("BID"),block:true}).done(function(data){
+	$.post('php/updateBuilding.php',{bname:buildingName,cid:buildingType,content:buildingContent,tag:buildingTag,bid:sessionStorage.getItem('BUILDINGID')
+,block:true}).done(function(bid){
 	          localStorage.clear();
-			  window.location.href = '';
-		});
+			  window.location.href = 'infoA.php?bid='+sessionStorage.getItem('BUILDINGID');
 	});
 }	
 

@@ -104,7 +104,8 @@ class PAD{
 		         $outcome=self::WhichBuilding($_GET['bid']);
 				 return self::skewText(1,$outcome['bname']).
 					    self::rightTopBtn($outcome['type']).
-						'<div class="infoABox">
+						'<input id="phpData" type="hidden" value="'.json_encode($outcome).'">
+						 <div class="infoABox">
  						   <div class="infoABoxBottom">
  							    '.self::infoARank().'
  						   </div>   
@@ -171,6 +172,9 @@ class PAD{
                            self::box('infoB','Build Name','Building Type','Building Context','Building Tag',0,0,0).   
 						'</div>';
 		         break;	 	 	 	  	 
+		   case 'count':
+		         return '<div id="tmpClock"></div>';
+				 break;
 		   default:
 		         break;
 	   }
@@ -199,9 +203,9 @@ class PAD{
    static function box($infoType,$buildingName,$buildingType,$buildingContext,$buildingTag,$addition,$addReside,$addTotal){
 	    return '<div class="'.$infoType.'Container animated  bounceInRight">
 					<div class="'.$infoType.'BuildingName">'.$buildingName.'</div>
-					<div class="'.$infoType.'BuildingT">'.$buildingType.($addition==2?'<div style="float:right; color:#fff; margin-right:10px;">已入住<label class="coYellow">'.$addReside.'</label>戶 尚餘<label class="coYellow">'.($addTotal-$addReside).'</label>戶</div>':'').'</div>
+					<div class="'.$infoType.'BuildingT toLookUp type"  data-href="infoB.php?bid='.$_GET['bid'].'">'.$buildingType.($addition==2?'<div style="float:right; color:#fff; margin-right:10px;">已入住<label class="coYellow">'.$addReside.'</label>戶 尚餘<label class="coYellow">'.($addTotal-$addReside).'</label>戶</div>':'').'</div>
 					<div class="'.$infoType.'BuildingContext">'.$buildingContext.'</div>
-				    <div class="'.$infoType.'BuildingT">'.$buildingTag.'</div>
+				    <div class="'.$infoType.'BuildingT toLookUp tag">'.$buildingTag.'</div>
 				</div>';
    }
    static function infoARank(){
@@ -210,7 +214,7 @@ class PAD{
 			if($i==3){
 				$tmp.='</div><div class="infoABoxBottomRight">';
 			}
-			$tmp.='<div style="margin-top:3px; margin-left:'.($i*7).'px;"><a>TAG'.$i.'</a><label style="margin-left:10px; color:#C4E4E8;">number次</label><div class="progress" style="margin:-5px 0 0 0;">
+			$tmp.='<div style="margin-top:3px; margin-left:'.($i*7).'px;"><a class="toLookUp tag">TAG'.$i.'</a><label style="margin-left:10px; color:#C4E4E8;">number次</label><div class="progress" style="margin:-5px 0 0 0;">
                    <div class="progress-bar progress-bar-core" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:'.($i*12).'%;" value="'.($i*12).'"></div>
                  </div></div>';
 		}
@@ -226,7 +230,7 @@ class PAD{
 			$RankMargin='margin:'.($index==0||$index==5?'50':'-15').'px 0 0 '.(50+($index%5)*8).'px;';
 		}
 	    return'<div style="'.$RankMargin.'">
-		         <label class="TagName">'.$name.'</label>
+		         <label class="TagName navToinfoA">'.$name.'</label>
 	             <label class="TagNumber"> '.$number.'</label>
 		         <div class="progress">
                    <div class="progress-bar progress-bar-core" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:'.$percent.'%;" value="'.$percent.'"></div>
@@ -263,7 +267,7 @@ class PAD{
    static function WhichBuilding($bid){
 	   if(isset($bid)){
 	     App::db_connect();
-	     $sql='SELECT * FROM user INNER JOIN building ON user.bid=building.bid WHERE user.bid=:bid';
+	     $sql='SELECT bname,content,cid,tag,type,reside,total FROM user INNER JOIN building ON user.bid=building.bid WHERE user.bid=:bid';
 	     $stmt=App::$dbn->prepare($sql);
 	     $stmt->execute(array(
 		    ":bid"=>$bid

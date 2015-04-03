@@ -2,7 +2,7 @@
 <?php
      if(isset($_GET['block'])){
 		App::db_connect();
- 	    $sql='UPDATE `status` SET `done`="D" WHERE `statusid`=:id';
+ 	    $sql='UPDATE `status` SET `done`= CONCAT(`done`,"D") WHERE `statusid`=:id';
  	    $stmt=App::$dbn->prepare($sql);
  	    $stmt->execute(array(
  			':id'=>$_GET['id']

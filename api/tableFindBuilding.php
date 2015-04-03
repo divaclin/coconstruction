@@ -19,7 +19,7 @@
        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
 	   
 	   if(empty($result)){
-		   echo '[{"none":"0"}]';
+		   echo '[{"eid":"0"}]';
 	   }
        else{
 		   echo json_encode($result);

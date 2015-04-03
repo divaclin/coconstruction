@@ -5,7 +5,7 @@ if(isNotBlock()){
     $sql='INSERT INTO status (device,behavior) VALUES(:device,:behavior)';
     $stmt=App::$dbn->prepare($sql);
     $stmt->execute(array(
-       ':device'=>'A',
+       ':device'=>'Z',
        ':behavior'=>'BUILD_UP'
     ));
 }
