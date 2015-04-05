@@ -6,7 +6,6 @@ $(window).load(function(){
 
 $(document).ready(function(){
 	$('footer').css("margin-top",$(window).height());
-	createImage();
 });
 
 $(window).resize(function(){
@@ -33,6 +32,29 @@ function startTime(second) {
 	else{
 		history.back();	
 	}
+}
+function infoBUpdate(cid,updateTime){
+	$.post("php/getInfoB.php",{cid:cid,block:true}).done(function (data){
+		 sessionStorage.setItem('infoB',data);
+	
+	 	 var typeList=$.parseJSON(sessionStorage.getItem('infoB')); 
+	 	 var currentIndex=updateTime%typeList.length;
+	
+	
+	
+	 	 $('.infoBBuildingName').html(typeList[currentIndex]['bname']);
+	 	 $('.infoBBuildingContext').html(typeList[currentIndex]['content']);
+	 	 $('.tag').html(typeList[currentIndex]['tag']);
+		 
+		 $('.infoBBuildingName').removeClass('animated fadeIn');
+		 $('.infoBBuildingContext').removeClass('animated fadeIn');
+		 $('.tag').removeClass('animated fadeIn');
+		 
+		 $('.infoBBuildingName').addClass('animated fadeIn');
+		 $('.infoBBuildingContext').addClass('animated fadeIn');
+		 $('.tag').addClass('animated fadeIn');
+	 	 var t =setTimeout(function(){infoBUpdate(cid,updateTime+1);},10000);		 	
+	});
 }
 
 function uploadEmail(){
@@ -63,6 +85,33 @@ function buildBuilding(){
 			alert('invalid input');
 		}
 }
+function resideHouse(){
+	var bid = getParameterByName('bid');
+	var userId = prompt("Please enter your ID", "");
+       if (userId != null){
+	     	$.post('php/checkHouse.php',{bid:bid,uid:userId,block:true}).done(function(data){
+		    	if($.parseJSON(data)==0){
+			    	alert('User do not exist OR had settled down OR no space');
+			    }
+			    else{
+				    $.post('php/statusHouse.php',{uuid:userId,bid:bid,block:true}).done(function(data){
+				    	alert('you are our citizen now');
+				    });
+			   }
+	     	});
+       }
+	   else{
+	    	alert('invalid input');
+	   }
+}
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 function finishBuilding(){
 	var buildingName=document.getElementsByName("buildingName")[0].value;
 	var buildingType=document.getElementById("typeSelector").value;

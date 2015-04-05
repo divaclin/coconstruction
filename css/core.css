@@ -308,6 +308,11 @@ footer{
 	overflow-x:scroll;
 	overflow-y:hidden;
 }
+.infoAinnerBox{
+	padding-top:3px;
+	min-width:100vw;
+	max-height:30px;
+}
 .infoABuildingContext{
 	height:180px;
 	font-size:20px;
@@ -425,10 +430,17 @@ footer{
 	height:20px;
 	color:#29ABE2;
 	font-size:15px;
+	overflow-x:scroll;	
+    overflow-y:hidden;	
+}
+.infoBinnerBox{
+	min-width:100vw;
+	max-height:30px;
 }
 .infoBBuildingContext{
 	height:160px;
-	font-size:20px;
+	font-size:17px;
+	overflow-y:scroll;	
 }
 /*infoC*/
 .infoCBox{
@@ -480,7 +492,12 @@ footer{
 	bottom:30px;
 	height:30px;
 }
-.infoCTag a{
+.infoCinnerBox{
+	padding-top:3px;
+	min-width:100vw;
+	max-height:30px;
+}
+.infoCinnerBox a{
 	opacity:1;
 	font-size:16px;
 	margin-left:3px;

@@ -8,6 +8,19 @@
 			 ':uid'=>$_POST['uid']
 	     ));
 		 $result=$stmt->fetch(PDO::FETCH_ASSOC);
+		 
+		 $sql2='SELECT * FROM gidtobid INNER JOIN tag ON gidtobid.gid=tag.gid WHERE bid=:bid ORDER BY count DESC';
+		 $stmt2=App::$dbn->prepare($sql2);
+	     $stmt2->execute(array(
+			 ':bid'=>$result['bid']
+	     ));
+		 $result2=$stmt2->fetchAll(PDO::FETCH_ASSOC);
+		 
+		 for($i=0;$i<count($result2);$i++){
+			 $text.=$result2['gname'].' ';
+		 }
+		 
+		 $result['tag']=$text;
 		 echo json_encode($result);
 	 }
 ?>

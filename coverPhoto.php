@@ -1,9 +1,9 @@
 <?php require_once('php/app.php'); ?>
-<?php require_once('php/core.php');?>
+<?php require_once('php/core.php'); ?>
 <!DOCTYPE html>
 <html>
     <?php HTML::Head('coverPhoto');?>
-    <body>
+    <body onload="createImage()">
 	<?php HTML::CustomizeImg();?>
 	</body>
 </html>

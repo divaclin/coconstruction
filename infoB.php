@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
     <?php HTML::Head('infoB');?>
-    <body>
+    <body onload=<?php echo '"infoBUpdate('.$_GET['cid'].',0)"';?>>
 	<?php PAD::Background('infoB');?>
 	</body>
 </html>
