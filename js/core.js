@@ -5,15 +5,25 @@ $(window).load(function(){
 });
 
 $(document).ready(function(){
-	$('footer').css("margin-top",$(window).height());
+	$( ".progress-bar-core" ).each(function(){
+		$(this).width($(this).attr('value'));
+	});
+	
+	$( ".TagNumber" ).each(function(){
+		var numAnim = new countUp(this, 0, $(this).attr('data-num'));
+		numAnim.start();
+		//$(this).html($(this).attr('data-num'));
+	});
+	
 });
 
 $(window).resize(function(){
 	$('footer').css("margin-top",$(window).height());
 });
 
+
 function startTime(second) {
-    document.getElementById('tmpClock').innerHTML = parseInt(second);
+    document.getElementById('tmpClock').innerHTML = '<p id="ClockP">'+parseInt(second)+'</p>';
 	if(second>0){
 		$.post("php/selectStatus.php",{block:true}).done(function (data){
 			var json=$.parseJSON(data);
@@ -30,29 +40,34 @@ function startTime(second) {
        var t = setTimeout(function(){startTime(second-.2)},200);
     }
 	else{
-		history.back();	
+		$('.modal').modal('hide');
+		//history.back();	
 	}
 }
 function infoBUpdate(cid,updateTime){
 	$.post("php/getInfoB.php",{cid:cid,block:true}).done(function (data){
 		 sessionStorage.setItem('infoB',data);
-	
 	 	 var typeList=$.parseJSON(sessionStorage.getItem('infoB')); 
 	 	 var currentIndex=updateTime%typeList.length;
+	     
+		 $('.infoBContainer').removeClass('bounceInRight');
+		 $('.infoBContainer').addClass('bounceOutRight');
 	
-	
-	
-	 	 $('.infoBBuildingName').html(typeList[currentIndex]['bname']);
-	 	 $('.infoBBuildingContext').html(typeList[currentIndex]['content']);
-	 	 $('.tag').html(typeList[currentIndex]['tag']);
+
 		 
-		 $('.infoBBuildingName').removeClass('animated fadeIn');
-		 $('.infoBBuildingContext').removeClass('animated fadeIn');
-		 $('.tag').removeClass('animated fadeIn');
+		 var t2=setTimeout(function(){
+ 		                   $('.infoBBuildingName').html('');
+		                   $('.infoBBuildingContext').html('');
+		                   $('.tag').html('');
+		 	 	 		   $('.infoBBuildingName').html(typeList[currentIndex]['bname']);
+		 				   $('.infoBBuildingContext').html(typeList[currentIndex]['content']);
+		 				   $('.tag').html(typeList[currentIndex]['tag']);
+			               $('.infoBContainer').removeClass('bounceOutRight');
+		                   $('.infoBContainer').addClass('bounceInRight');
+			               },1000);
+
+
 		 
-		 $('.infoBBuildingName').addClass('animated fadeIn');
-		 $('.infoBBuildingContext').addClass('animated fadeIn');
-		 $('.tag').addClass('animated fadeIn');
 	 	 var t =setTimeout(function(){infoBUpdate(cid,updateTime+1);},10000);		 	
 	});
 }
@@ -77,7 +92,9 @@ function buildBuilding(){
 				else{
 					$.post('php/statusBuildup.php',{uuid:userId,block:true}).done(function(data){});
 					sessionStorage.setItem("USERID", data);
-					window.location.href ='count.php';
+					$('.modal').modal('show');
+					startTime(15);
+					//window.location.href ='count.php';
 				}
 			});
 	    }
@@ -116,11 +133,19 @@ function finishBuilding(){
 	var buildingName=document.getElementsByName("buildingName")[0].value;
 	var buildingType=document.getElementById("typeSelector").value;
 	var buildingContent=document.getElementsByName("buildingContent")[0].value;
-	var buildingTag=document.getElementsByName("buildingTag")[0].value;
+	var buildingTag=document.getElementsByName("buildingTag")[0].value.split(" ");
     
-	$.post('php/updateBuilding.php',{bname:buildingName,cid:buildingType,content:buildingContent,tag:buildingTag,bid:sessionStorage.getItem('BUILDINGID')
-,block:true}).done(function(bid){
-	          localStorage.clear();
+	for(var i=0;i<buildingTag.length;i++){
+		if(buildingTag[i][0]!='#'){
+			buildingTag[i]='#'+buildingTag[i];
+		}
+		if(buildingTag[i].length>7){
+		    buildingTag.splice(i,1);
+		}
+	}
+	$.post('php/updateBuilding.php',{bname:buildingName,cid:buildingType,content:buildingContent,tag:JSON.stringify(buildingTag),bid:sessionStorage.getItem('BUILDINGID')
+,block:true}).done(function(data){
+	          sessionStorage.clear();
 			  window.location.href = 'infoA.php?bid='+sessionStorage.getItem('BUILDINGID');
 	});
 }	

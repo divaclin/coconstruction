@@ -11,52 +11,51 @@
 			 ':bid'=>$_POST['bid']	
  		));
         
-		$tagStr=explode(" ",$_POST['tag']);
-		
-		for($i=0;$i<count($tagStr);$i++){
+		$tagArr=json_decode($_POST['tag']);
+
+		foreach($tagArr as $value){
 	        $sql='SELECT * FROM tag WHERE gname=:gname';
 	        $stmt=App::$dbn->prepare($sql);
 	        $stmt->execute(array(
-	 		   ':gname'=>$tagStr[$i];
+	 		   ':gname'=>$value
 	        ));
 	        $result=$stmt->fetch(PDO::FETCH_ASSOC);
-			
-			if(empty($result)){
-			    $sql='INSERT INTO tag (gname,count) VALUES(:gname,:count)';
+			if(!empty($result)){
+	    		   $sql='UPDATE `tag` SET `count` = `count`+1 WHERE `gid`=:gid';
+	    		   $stmt=App::$dbn->prepare($sql);
+	    		   $stmt->execute(array(
+	   		              ':gid'=>$result['gid']
+	    		   ));
+
+			   $sql='INSERT INTO gidtobid (bid,gid) VALUES(:bid,:gid)';
+		       $stmt=App::$dbn->prepare($sql);
+		       $stmt->execute(array(
+		         	':bid'=>$_POST['bid'],
+				    ':gid'=>$result['gid']
+		       ));
+			}
+		    else{
+			    $sql='INSERT INTO tag(gname) VALUES(:gname)';
+		        $stmt=App::$dbn->prepare($sql);
 			    $stmt->execute(array(
-			           ':gname'=>$tagStr[$i],
-				       ':count'=>1;
+			           ':gname'=>$value,
 			    ));
-				
+
 		        $sql='SELECT * FROM tag WHERE gname=:gname';
 		        $stmt=App::$dbn->prepare($sql);
 		        $stmt->execute(array(
-		 		   ':gname'=>$tagStr[$i];
+		 		   ':gname'=>$value
 		        ));
-		        $result=$stmt->fetch(PDO::FETCH_ASSOC);	
-				
+		        $resultGid=$stmt->fetch(PDO::FETCH_ASSOC);
+
 			    $sql='INSERT INTO gidtobid (bid,gid) VALUES(:bid,:gid)';
 			    $stmt=App::$dbn->prepare($sql);
 			    $stmt->execute(array(
 			    	':bid'=>$_POST['bid'],
-					':gid'=>$result['gid']
+					':gid'=>$resultGid['gid']
 			    ));
 			}
-			else{
-	    		 $sql='UPDATE `tag` SET `count` = `count`+1 WHERE `gid`=:gid';
-	    		 $stmt=App::$dbn->prepare($sql);
-	    		 $stmt->execute(array(
-	   		         ':gid'=>$result['gid']	
-	    		 ));
-				
-				 $sql='INSERT INTO gidtobid (bid,gid) VALUES(:bid,:gid)';
-			     $stmt=App::$dbn->prepare($sql);
-			     $stmt->execute(array(
-			    	':bid'=>$_POST['bid'],
-					':gid'=>$result['gid']
-			     ));
-			}
-		}		
+		}
 		
 	 }
 ?>
