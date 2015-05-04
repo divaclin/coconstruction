@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
     <?php HTML::Head('project');?>
-    <body>
+    <body style="position:absolute;">
 	<?php PAD::Background('project');?>
 	</body>
 </html>

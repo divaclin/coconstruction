@@ -5,8 +5,12 @@
 body{
 	font-family:"LiHei Pro","Helvetica Neue","Helvetica","Arial","sans-serif";
     font-weight:200;
-	overflow-x:hidden;
-	overflow-y:hidden;	
+	position:fixed;
+	-webkit-user-select: none;                /* disable cut copy paste */
+	-webkit-touch-callout: none;              /* disable callout, image save panel */
+	-webkit-tap-highlight-color: transparent; /* "turn off" link highlight */
+/*	overflow-x:hidden;
+	overflow-y:hidden;*/
 }
 .coYellow{
 	color:#ffff00;
@@ -60,6 +64,16 @@ footer{
 	background-repeat:no-repeat; 
 	background-size:1024px 768px;
 	overflow:hidden;
+}
+.projectBackground{
+	position:absolute;
+	top:0px;
+	width:2504px; 
+	height:720px;
+	background-repeat:no-repeat; 
+	background-size:2504px 720px;
+	overflow-x:scroll;
+	overflow-y:hidden;
 }
 /*btn*/
 .buildBtn,.houseBtn,.finishBtn{
@@ -139,17 +153,30 @@ footer{
 	margin:20px auto;
 	
 }
-.emailBtn:active{
-	background-image:url('../img/emailBtnPressed.png');
+.emailPressImg{
+	background-image:url('../img/emailBtnPressed2.png');
+}
+.emailBtnPress{
 	border : none;
-	width:150px; 
-	height:150px; 
-	background-size:150px 150px; 
-	background-repeat:no-repeat; 
+	width:150px;
+	height:150px;
+	background-size:150px 150px;
+	background-repeat:no-repeat;
 	background-color:transparent;
 	color:transparent;
 	margin:20px auto;
 }
+/*.emailBtn:active{
+	background-image:url('../img/emailBtnPressed.png');
+	border : none;
+	width:150px;
+	height:150px;
+	background-size:150px 150px;
+	background-repeat:no-repeat;
+	background-color:transparent;
+	color:transparent;
+	margin:20px auto;
+}*/
 .modal-content{
 	height:300px; 
 	background-color:rgba(255,255,255,0);
@@ -224,11 +251,22 @@ footer{
 	padding:5px;
 }
 /*project*/
+.projectInfoBox{
+	width:615px;
+	height:435px;
+	background-image:url('../img/projectInfoBox.png');
+	background-repeat:no-repeat; 
+	background-size:615px 435px; 
+	position:absolute;
+	top:250px;
+	left:450px;
+}
 .projectBox{
-	float:left;
+	float:right;
 	margin-left:12px;
-	width:1000px;
-	height:575px;
+	width:1500px;
+	height:600px;
+	margin-top:60px;
 }
 .projectPop{
 	background-image:url('../img/projectPopulation.png');
@@ -237,7 +275,7 @@ footer{
 	width:160px;
 	height:120px;
 	float:right;
-	margin:-50px 20px 0 0;
+	margin:10px 20px 0 800px;
 	color:#C4E4E8;
 	font-size:35px;
 }
@@ -523,6 +561,30 @@ footer{
 	background-image:url('../img/count.png'); 
 	background-position:50% 50% ;
 }
+.modal-content3{
+	height:230px; 
+	background-color:rgba(255,255,255,0);
+	background-repeat:no-repeat; 
+    background-size:450px 230px; 
+	background-image:url('../img/buildFail.png'); 
+	background-position:50% 50% ;
+}
+.modal-content4{
+	height:370px; 
+	background-color:rgba(255,255,255,0);
+	background-repeat:no-repeat; 
+    background-size:500px 370px; 
+	background-image:url('../img/emailBox.png'); 
+	background-position:50% 50% ;
+}
+#buildFail{
+    color: #fff;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 18px;
+    padding-top: 100px;
+    margin-top: 150px;
+}
 #tmpClock{
 	color:#E2E95F;
 	text-align:center;
@@ -531,3 +593,4 @@ footer{
 	padding-top:110px;
 	margin-top:150px;
 }
+

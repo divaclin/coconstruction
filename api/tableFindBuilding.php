@@ -11,6 +11,28 @@
 			':bid'=>$_GET['bid']
 	   ));
 	   
+	   /*prevent too many selects */
+   	   $sql='SELECT * FROM status WHERE device=:device AND behavior=:behavior AND oid=:oid';
+   	   $stmt=App::$dbn->prepare($sql);
+       $stmt->execute(array(
+		  ':device'=>'D',
+		  ':behavior'=>'LOOK_UP',
+		  ':oid'=>$_GET['bid']
+       ));
+   	   $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+		   
+	   if(empty($result)){	   
+          $sql='INSERT INTO status (device,behavior,object_type,object,oid) VALUES(:device,:behavior,:obj_type,:object,:oid)';
+          $stmt=App::$dbn->prepare($sql);
+          $stmt->execute(array(
+           ':device'=>'D',
+           ':behavior'=>'LOOK_UP',
+   	       ':obj_type'=>'B',
+   	       ':object'=>'{"bid":"'.$_GET['bid'].'"}',
+		   ':oid'=>$_GET['bid']
+          ));  
+       }
+	   
        $sql='SELECT * FROM building INNER JOIN color ON building.cid=color.cid WHERE bid=:bid';
        $stmt=App::$dbn->prepare($sql);
        $stmt->execute(array(

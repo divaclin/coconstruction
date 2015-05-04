@@ -11,8 +11,8 @@
 		$sql='UPDATE `status` SET `done`= CONCAT (`done`,:device) WHERE `behavior`=:behavior';
 		$stmt=App::$dbn->prepare($sql);
 		$stmt->execute(array(
-				':device'=>'Z',
-                ':behavior'=>'BUILD_UP_return'
+				':device'=>$_POST['device'],
+                ':behavior'=>'BUILD_UP_return',
 		));
 	}
 ?>

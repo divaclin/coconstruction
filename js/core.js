@@ -1,10 +1,40 @@
-document.addEventListener("touchstart", function(){}, true);
+var radian =radian || false;
+
+document.addEventListener("touchstart", function(){
+	$('.emailBtnPress').addClass('emailPressImg');
+}, true);
+document.addEventListener("touchend", function(){
+	$('.emailBtnPress').removeClass('emailPressImg');
+}, true);
+
 
 $(window).load(function(){
 	
 });
 
 $(document).ready(function(){
+	if(!radian){
+	   effectAnimate();
+    }
+	getAllTag();
+	$('.emailBtn').mousedown(function(){
+	     $('.emailBtnPress').addClass('emailPressImg');
+	})
+	$('.emailBtn').mouseup(function(){
+	     $('.emailBtnPress').removeClass('emailPressImg');
+	})
+});
+
+$(window).resize(function(){
+	$('footer').css("margin-top",$(window).height());
+});
+
+function getAllTag(){
+   $.post("php/getTag.php",{block:true}).done(function (data){});
+   $('#input-facebook-theme').tokenInput('php/tag.json',{theme: "facebook"});
+   console.log($('.buildFormTag').text());
+}
+function effectAnimate(){
 	$( ".progress-bar-core" ).each(function(){
 		$(this).width($(this).attr('value'));
 	});
@@ -14,13 +44,7 @@ $(document).ready(function(){
 		numAnim.start();
 		//$(this).html($(this).attr('data-num'));
 	});
-	
-});
-
-$(window).resize(function(){
-	$('footer').css("margin-top",$(window).height());
-});
-
+}
 
 function startTime(second) {
     document.getElementById('tmpClock').innerHTML = '<p id="ClockP">'+parseInt(second)+'</p>';
@@ -28,11 +52,16 @@ function startTime(second) {
 		$.post("php/selectStatus.php",{block:true}).done(function (data){
 			var json=$.parseJSON(data);
 			for(var i=0; i<json.length;i++){
-				if(json[i]['device']=='D' && json[i]['behavior']=='BUILD_UP_return' && json[i]['done'].indexOf('Z')==-1){
+				if(json[i]['device']=='D' && json[i]['behavior']=='BUILD_UP_return' && json[i]['done'].indexOf(localStorage.getItem("deviceid"))==-1){
 				   var bid=	$.parseJSON(json[i]['object']);
-		   		   $.post("php/updateUser.php",{uid:sessionStorage.getItem('USERID'),bid:bid['bid'],block:true}).done(function (data){
+		   		   $.post("php/updateUser.php",{uid:sessionStorage.getItem('USERID'),bid:bid['bid'],block:true,device:localStorage.getItem("deviceid")}).done(function (data){
 					      sessionStorage.setItem('BUILDINGID',bid['bid']);
-						  window.location.href ='build.php';
+						  if(!radian){
+						     window.location.href ='build.php';
+					      }
+						  else{
+							  switchController.ajaxPage($(this).data('ajax'),false);
+						  }
 				   });
 				}
 			}
@@ -40,7 +69,7 @@ function startTime(second) {
        var t = setTimeout(function(){startTime(second-.2)},200);
     }
 	else{
-		$('.modal').modal('hide');
+		$('.modalCount').modal('hide');
 		//history.back();	
 	}
 }
@@ -58,10 +87,10 @@ function infoBUpdate(cid,updateTime){
 		 var t2=setTimeout(function(){
  		                   $('.infoBBuildingName').html('');
 		                   $('.infoBBuildingContext').html('');
-		                   $('.tag').html('');
-		 	 	 		   $('.infoBBuildingName').html(typeList[currentIndex]['bname']);
+		                   $('.alterTag').html('');
+		 	 	 		   $('.infoBBuildingName').html('<a style="color:#fff;" href="infoA.php?bid='+typeList[currentIndex]['bid']+'" data-ajax="page=infoA&bid='+typeList[currentIndex]['bid']+'">'+typeList[currentIndex]['bname']+'</a>');
 		 				   $('.infoBBuildingContext').html(typeList[currentIndex]['content']);
-		 				   $('.tag').html(typeList[currentIndex]['tag']);
+		 				   $('.alterTag').html(typeList[currentIndex]['tag']);
 			               $('.infoBContainer').removeClass('bounceOutRight');
 		                   $('.infoBContainer').addClass('bounceInRight');
 			               },1000);
@@ -80,46 +109,53 @@ function uploadEmail(){
 		$('.returnId').empty()
 		$('.returnId').append('<label>'+$.parseJSON(data)+'</label>');
 		$('.modal').modal('toggle');
-    });	
+    });
+	document.getElementsByName("emailUsr")[0].value='';
+	document.getElementsByName("emailAddress")[0].value='';	
 }
 function buildBuilding(){
-	var userId = prompt("Please enter your ID", "");
+	   $('.modalBuildTypeId').modal('hide');	    
+		var userId = document.getElementsByName("inputIdBuild")[0].value;
 	    if (userId != null){
 			$.post('php/checkId.php',{uid:userId,block:true}).done(function(data){
 				if($.parseJSON(data)==0){
-					alert('User do not exist OR had built');
+					$('.modalBuilding').modal('show');
+					//alert('User do not exist OR had built');
 				}
 				else{
-					$.post('php/statusBuildup.php',{uuid:userId,block:true}).done(function(data){});
+					$.post('php/statusBuildup.php',{uuid:userId,block:true,device:localStorage.getItem("deviceid")}).done(function(data){});
 					sessionStorage.setItem("USERID", data);
-					$('.modal').modal('show');
+					$('.modalCount').modal('show');
 					startTime(15);
 					//window.location.href ='count.php';
 				}
 			});
 	    }
 		else{
-			alert('invalid input');
+			$('.modalBuilding').modal('show');
 		}
+		document.getElementsByName("inputIdBuild")[0].value='';
 }
 function resideHouse(){
+   $('.modalResideTypeId').modal('hide');	    
 	var bid = getParameterByName('bid');
-	var userId = prompt("Please enter your ID", "");
+	var userId = document.getElementsByName("inputIdReside")[0].value;
        if (userId != null){
 	     	$.post('php/checkHouse.php',{bid:bid,uid:userId,block:true}).done(function(data){
 		    	if($.parseJSON(data)==0){
-			    	alert('User do not exist OR had settled down OR no space');
+					$('.modalResiding').modal('show');
 			    }
 			    else{
-				    $.post('php/statusHouse.php',{uuid:userId,bid:bid,block:true}).done(function(data){
-				    	alert('you are our citizen now');
+				    $.post('php/statusHouse.php',{uuid:userId,bid:bid,block:true,device:localStorage.getItem("deviceid")}).done(function(data){
+						$('.modalResidingAfter').modal('show');
 				    });
 			   }
 	     	});
        }
 	   else{
-	    	alert('invalid input');
+		$('.modalResiding').modal('show');
 	   }
+	   document.getElementsByName("inputIdReside")[0].value='';
 }
 
 function getParameterByName(name) {
@@ -144,9 +180,11 @@ function finishBuilding(){
 		}
 	}
 	$.post('php/updateBuilding.php',{bname:buildingName,cid:buildingType,content:buildingContent,tag:JSON.stringify(buildingTag),bid:sessionStorage.getItem('BUILDINGID')
-,block:true}).done(function(data){
-	          sessionStorage.clear();
-			  window.location.href = 'infoA.php?bid='+sessionStorage.getItem('BUILDINGID');
+,block:true,device:localStorage.getItem("deviceid")}).done(function(data){
+	    if(!radian){
+		    window.location.href = 'infoA.php?bid='+sessionStorage.getItem('BUILDINGID');
+		 }
+	     sessionStorage.clear();
 	});
 }	
 

@@ -45,10 +45,12 @@ class HTML{
                 <link rel="stylesheet" href="css/reset.css">				
                 <link rel="stylesheet" href="css/bootstrap.min.css">
                 <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+                <link rel="stylesheet" href="css/token-input-facebook.css">				
 				<link rel="stylesheet" href="css/animate.css">
                 <link rel="stylesheet" href="css/core.css">				
                 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
                 <script src="js/bootstrap.min.js"></script>
+                <script src="js/jquery.tokeninput.js"></script>
                 <script src="js/countUp/countUp.min.js"></script>
 				<script src="js/core.js"></script>
 			</head>';
@@ -79,11 +81,22 @@ class HTML{
 
 class PAD{
    static function Background($background){
-		  echo '<video width="1024" height="768" autoplay="autoplay" loop>
-		           <source src="img/Background.mp4" type="video/mp4">
-		             Your browser does not support the video tag.
-		        </video>
-		        <article class="background">'.self::Content($background).'</article>';
+	   switch ($background){
+		   case 'email':
+		        echo'<article class="background" style="background-image:url(\'img/emailBackground.gif\');" >'.self::Content($background).'</article>';
+		        break;
+		   case 'project':
+                echo'<article class="projectBackground" style="background:#000; background-image:url(\'img/projectBackground.png\');" >'.self::Content($background).'</article>';   
+		        break;
+		   default:
+ 		        echo '<article class="background">'.self::Content($background).'</article>';/*'<video width="1024" height="768" autoplay="autoplay" loop>
+ 		                <source src="img/Background.mp4" type="video/mp4">
+ 		                 Your browser does not support the video tag.
+ 		              </video>
+ 		              <article class="background">'.self::Content($background).'</article>';*/
+		        break;
+	   }
+		 
    }
    static function Content($text){
 	   switch ($text){
@@ -91,7 +104,9 @@ class PAD{
 		         return '<form class="emailForm" style="background-image:url(\'img/'.$text.'Box.png\');">
 				           <input required class="emailText" type="text" name="emailUsr"     placeholder="&nbsp;&nbsp;請輸入姓名" style="margin-top:110px;">
 				           <input required class="emailText" type="text" name="emailAddress" placeholder="&nbsp;&nbsp;請輸入email">
-				           <input class="emailBtn" type="button"  onclick="uploadEmail()">
+				           <div class="emailBtnPress">
+						     <input class="emailBtn" type="button"  onclick="uploadEmail()">
+						   </div>
 						 </form>
 						 <div class="modal fade">
 						   <div class="modal-dialog">
@@ -106,25 +121,30 @@ class PAD{
 		         $outcome=self::WhichBuilding($_GET['bid']);
 				 return self::skewText(1,$outcome['bname']).
 					    self::rightTopBtn($outcome['type']).
-						'<input id="phpData" type="hidden" value="'.json_encode($outcome).'">
+						'<script> localStorage.setItem("status",JSON.stringify('.json_encode($outcome).'));</script>
 						 <div class="infoABox">
  						   <div class="infoABoxBottom">
  							    '.self::infoARank().'
  						   </div>'.self::buildingImgGenerator().                          self::box('infoA',$outcome['bname'],$outcome['cid'],$outcome['content'],$outcome['bid'],$outcome['type'],$outcome['reside'],$outcome['total']).	   
-						'</div>'.self::Content('count');
+						'</div>'.self::Content('modal');
 				 }
 		         break;
 		   case 'infoB':
 		         if(isset($_GET['cid'])){
-				 $outcome=self::WhichType($_GET['cid']);	 
+				 $outcome=self::WhichType($_GET['cid']);
+                 $statusObj=array(
+					 "cid"=>$_GET['cid'],
+					 "tname"=>buildingType($_GET['cid'])
+                 );	 
 		         return  self::skewText(1,buildingType($_GET['cid'])).
 					     self::rightTopBtn(1).
-				         '<div class="infoBBox">
+	 					'<script> localStorage.setItem("status",JSON.stringify('.json_encode($statusObj).'));</script>
+				         <div class="infoBBox">
 				             <div class="infoBTagRank">'.self::InfoBTagRank().'</div>'
 				             .self::buildingImgGenerator().
 							 '<div class="infoBBuildingRank">'.self::InfoBBuildingRank().'</div>'.
                              self::box('infoB',$outcome['bname'],$_GET['cid'],$outcome['content'],$outcome['bid'],0,0,0).
-						 '</div>'.self::Content('count');
+						 '</div>'.self::Content('modal');
 				 }
 		         break;
 		   case 'infoC':
@@ -141,9 +161,10 @@ class PAD{
                  return self::skewText(1,$resultC['gname']).
 					    self::skewText(0,$resultC['count']).
 					    self::rightTopBtn(1).
-					     '<div class="infoCBox">
+						'<script> localStorage.setItem("status",JSON.stringify('.json_encode($resultC).'));</script>
+					     <div class="infoCBox">
 				            <div class="infoCContainer">'.$tmp.'</div>  
-					     </div>'.self::Content('count');
+					     </div>'.self::Content('modal');
 				 }		   
  		         break;
 		   case 'build':
@@ -168,28 +189,72 @@ class PAD{
 									   <option value="10">教育類</option>
 									 </select>
 									 <textarea class="buildFormTextarea" name="buildingContent" placeholder="介紹一下你的建築物吧"></textarea>
-									 <input class="buildFormTag" name="buildingTag" type="text" placeholder="只要用空格隔開就可以下tag摟，每個tag要小於六個字">
+									 <input id="input-facebook-theme" class="buildFormTag" name="buildingTag" type="hidden" placeholder="只要用空格隔開就可以下tag摟，每個tag要小於六個字">
+									 </ul>
 								 </form>
 				            </div>
 						</div>';
 		         break;
-		   case 'scan':
-		         break;
 		   case 'project':
-		         return self::skewText(1,'BuildingType').
-					    '<div class="projectBox">
-	                       <div class="infoBTagRank">'.self::InfoBTagRank().'</div>
-			               <div class="projectPop"><label>365</label></div>
-				           <div class="infoBBuilding"></div>
-				           <div class="infoBBuildingRank">'.self::InfoBBuildingRank().'</div>'.
-                           self::box('infoB','Build Name','Building Type','Building Context','Building Tag',0,0,0).   
-						'</div>';
-		         break;	 	 	 	  	 
-		   case 'count':
-		         return '<div class="modal fade" data-backdrop="static" data-keyboard="false">
+		         if(isset($_GET['bid'])){
+			     $outcome=self::WhichBuilding($_GET['bid']);	 
+				 return self::skewText(1,buildingType($outcome['type'])).
+					 '<div class="projectBox">
+						 <div class="projectInfoBox"></div>
+			             <div class="infoBBuildingRank" style="margin:5px 5px 5px 100px;">'.self::InfoBBuildingRank().'</div>'
+			             .self::buildingImgGenerator().
+						 '<div class="infoBTagRank" style="margin:5px 5px 5px 100px;">'.self::InfoBTagRank().'</div>
+  			              <div class="projectPop"><label>365</label></div>	 
+					 </div>';
+				 }
+		         break;	 
+				 	 	 	  	 
+		   case 'modal':
+		         return '<div style="padding-top:120px;" class="modal modalCount fade" data-backdrop="static" data-keyboard="false">
 						   <div class="modal-dialog">
 						     <div class="modal-content2">
                                 <p id="tmpClock"></p>
+						     </div>
+						   </div>
+						 </div>
+					     <div style="margin-top:149px; position:absolute;" class="modal modalBuildTypeId fade">
+						   <div class="modal-dialog">
+						     <div class="modal-content4">
+  				                 <input required style="margin-top:100px; margin-left:120px;" class="emailText" type="text" name="inputIdBuild" placeholder="&nbsp;&nbsp;請輸入id">
+	  				             <div class="emailBtnPress">
+							       <input class="emailBtn" type="button"  onclick="setTimeout(function(){buildBuilding()},1000);">
+							     </div>
+						     </div>
+						   </div>
+						 </div>
+						 <div style="margin-top:149px; position:absolute;" class="modal modalResideTypeId fade">
+						 	<div class="modal-dialog">
+						 		<div class="modal-content4">
+						   			  <input required style="margin-top:100px; margin-left:120px;" class="emailText" type="text" name="inputIdReside" placeholder="&nbsp;&nbsp;請輸入id">   
+		   				              <div class="emailBtnPress">
+	 							        <input class="emailBtn" type="button"  onclick="setTimeout(function(){resideHouse()},1000);">
+									  </div>
+						 		</div>
+						 	</div>
+						 </div>
+					     <div style="padding-top:120px;" class="modal modalBuilding fade">
+						   <div class="modal-dialog">
+						     <div class="modal-content3">
+                                <p id="buildFail">輸入失敗/無此id/此id已建置建築物</p>
+						     </div>
+						   </div>
+						 </div>
+					     <div style="padding-top:120px;" class="modal modalResiding fade">
+						   <div class="modal-dialog">
+						     <div class="modal-content3">
+                                <p id="buildFail" style="font-size:15px;">輸入失敗/無此id/此id已入住/此建築已額滿</p>
+						     </div>
+						   </div>
+						 </div>
+					     <div style="padding-top:120px;" class="modal modalResidingAfter fade">
+						   <div class="modal-dialog">
+						     <div class="modal-content3">
+                                <p id="buildFail">入住成功，歡迎成為共構的一份子</p>
 						     </div>
 						   </div>
 						 </div>';
@@ -202,13 +267,14 @@ class PAD{
 	   //0=完成 1=建造 2=入住
 	   switch($btnType){
 		   case 0:
-             return '<input class="finishBtn" type="button" onclick="finishBuilding()">';		     		   
+             return '<input class="finishBtn toFinish" type="button" onclick="finishBuilding()">';		     		   
 		     break;
 		   case 1:
-	         return '<input class="buildBtn" type="button" onclick="buildBuilding()">';		     
+	         return '<input class="buildBtn toBuildUp" type="button" onclick="$(\'.modalBuildTypeId\').modal(\'show\');
+" data-ajax="page=build">';		     
 		     break;
 		   case 2:
-             return '<input class="houseBtn" type="button" onclick="resideHouse()">';		     
+             return '<input class="houseBtn toHouse" type="button" onclick="$(\'.modalResideTypeId\').modal(\'show\');">';		     
 		     break;
 		   default:
 		     break;
@@ -229,14 +295,14 @@ class PAD{
         $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
 		$tagList='';
 		for($i=0;$i<count($result);$i++){
-			$tagList.='<a href="infoC.php?gid='.$result[$i]['gid'].'" data-ajax="page=infoC&gid='.$result[$i]['gid'].'">'.$result[$i]['gname'].'  </a>';
+			$tagList.='<a href="infoC.php?gid='.$result[$i]['gid'].'" data-ajax="page=infoC&gid='.$result[$i]['gid'].'" class="toLookUp tag">'.$result[$i]['gname'].'  </a>';
 		}
 		
 	    return '<div class="'.$infoType.'Container animated  bounceInRight">
-					<div class="'.$infoType.'BuildingName">'.$buildingName.'</div>
-					<div class="'.$infoType.'BuildingT toLookUp type"><a href="infoB.php?cid='.$buildingType.'" data-ajax="page=infoB&cid='.$buildingType.'">'.buildingType($buildingType).'</a>'.($addition==2?'<div style="float:right; color:#fff; margin-right:10px;">已入住<label class="coYellow">'.$addReside.'</label>戶 尚餘<label class="coYellow">'.($addTotal-$addReside).'</label>戶</div>':'').'</div>
+					<div class="'.$infoType.'BuildingName toLookUp building">'.$buildingName.'</div>
+					<div class="'.$infoType.'BuildingT"><a href="infoB.php?cid='.$buildingType.'" data-ajax="page=infoB&cid='.$buildingType.'" class="toLookUp type">'.buildingType($buildingType).'</a>'.($addition==2?'<div style="float:right; color:#fff; margin-right:10px;">已入住<label class="coYellow">'.$addReside.'</label>戶 尚餘<label class="coYellow">'.($addTotal-$addReside).'</label>戶</div>':'').'</div>
 					<div class="'.$infoType.'BuildingContext">'.$buildingContext.'</div>
-				    <div class="'.$infoType.'BuildingT toLookUp tag"><div class="'.$infoType.'innerBox">'.$tagList.'</div></div>
+				    <div class="'.$infoType.'BuildingT alterTag"><div class="'.$infoType.'innerBox">'.$tagList.'</div></div>
 				</div>';
    }
    static function infoARank(){
@@ -266,7 +332,7 @@ class PAD{
 			if($i==3){
 				$tmp.='</div><div class="infoABoxBottomRight">';
 			}
-			$tmp.='<div style="margin-top:5px; margin-left:'.($i*7).'px;"><a class="toLookUp tag" href="'.($i<3?'infoB.php?cid='.$result[$i]['cid']:'infoC.php?gid='.$result2[$i]['gid']).'" data-ajax="'.($i<3?'page=infoB&cid='.$result[$i]['cid']:'page=infoC&gid='.$result2[$i%3]['gid']).'">'.($i<3?buildingType($result[$i]['cid']):$result2[$i%3]['gname']).'</a><label style="margin-left:10px;" class="TagNumber" data-num="'.($i<3?$result[$i]['count']:$result2[$i%3]['count']).'">0</label><div class="progress" style="margin:0 0;">
+			$tmp.='<div style="margin-top:5px; margin-left:'.($i*7).'px;"><a class="toLookUp '.($i<3?'type':'tag').'" href="'.($i<3?'infoB.php?cid='.$result[$i]['cid']:'infoC.php?gid='.$result2[$i]['gid']).'" data-ajax="'.($i<3?'page=infoB&cid='.$result[$i]['cid']:'page=infoC&gid='.$result2[$i%3]['gid']).'">'.($i<3?buildingType($result[$i]['cid']):$result2[$i%3]['gname']).'</a><label style="margin-left:10px;" class="TagNumber" data-num="'.($i<3?$result[$i]['count']:$result2[$i%3]['count']).'">0</label><div class="progress" style="margin:0 0;">
                    <div class="progress-bar progress-bar-core" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%;" value="'.($i<3?floatval($result[$i]['count']/$totalCount)*100+20:floatval($result2[$i%3]['count']/$totalCount2)*100+20).'"></div>
                  </div></div>';
 		}
@@ -282,7 +348,7 @@ class PAD{
 			$RankMargin='margin:'.($index==0||$index==5?'50':'-15').'px 0 0 '.(50+($index%5)*8).'px;';
 		}
 	    return'<div style="'.$RankMargin.'">
-		         <label class="TagName navToinfoA">'.($type==1?'<a href="infoB.php?cid='.$name.'" data-ajax="page=infoB&cid='.$name.'">'.buildingType($name).'</a>':'<a href="infoC.php?gid='.$name['gid'].'" data-ajax="page=infoC&gid='.$name['gid'].'">'.$name['gname'].'</a>').'</label>
+		         <label class="TagName navToinfoA">'.($type==1?'<a href="infoB.php?cid='.$name.'" data-ajax="page=infoB&cid='.$name.'" class="toLookUp type">'.buildingType($name).'</a>':'<a href="infoC.php?gid='.$name['gid'].'" class="toLookUp tag" data-ajax="page=infoC&gid='.$name['gid'].'">'.$name['gname'].'</a>').'</label>
 	             <label class="TagNumber" data-num="'.$number.'">0</label>
 		         <div class="progress">
                    <div class="progress-bar progress-bar-core" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%;" value="'.($percent+20).'"></div>
@@ -347,7 +413,7 @@ class PAD{
 	  	      ));
 	  	      $result2=$stmt2->fetch(PDO::FETCH_ASSOC);
 			  $tmp.='<div class="infoCContent">
-		               <div class="infoCText"><a href="infoA.php?bid='.$result2['bid'].'" data-ajax="page=infoA&bid='.$result2['bid'].'">'.$result2['bname'].'</a></div>
+		               <div class="infoCText"><a href="infoA.php?bid='.$result2['bid'].'" data-ajax="page=infoA&bid='.$result2['bid'].'" class="toLookUp building">'.$result2['bname'].'</a></div>
 	                   <a href=""><img class="infoCImg" src="img/infoCtest.png"></a>
 				       <div class="infoCTag"><div class="infoCinnerBox">';
 			  
@@ -359,7 +425,7 @@ class PAD{
 			  $result3=$stmt3->fetchALL(PDO::FETCH_ASSOC);
 			  
 			  for($j=0;$j<count($result3);$j++){
-				  $tmp.='<a href="infoC.php?gid='.$result3[$j]['gid'].'" data-ajax="page=infoC&gid='.$result3[$j]['gid'].'">'.$result3[$j]['gname'].' </a>';
+				  $tmp.='<a href="infoC.php?gid='.$result3[$j]['gid'].'" data-ajax="page=infoC&gid='.$result3[$j]['gid'].'" class="toLookUp tag">'.$result3[$j]['gname'].' </a>';
 			  }
 			  		   
 		      $tmp.='</div></div></div>';

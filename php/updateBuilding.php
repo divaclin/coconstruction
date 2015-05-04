@@ -10,7 +10,13 @@
 			 ':cid'=>$_POST['cid'],
 			 ':bid'=>$_POST['bid']	
  		));
-        
+	   
+	     $sql='UPDATE `color` SET `count` = `count`+1 WHERE `cid`=:cid';
+	     $stmt=App::$dbn->prepare($sql);
+	     $stmt->execute(array(
+              ':cid'=>$_POST['cid']
+	     ));
+		
 		$tagArr=json_decode($_POST['tag']);
 
 		foreach($tagArr as $value){
@@ -56,6 +62,21 @@
 			    ));
 			}
 		}
+		
+		$sql='DELETE FROM status WHERE `device`=:device';
+		$stm=App::$dbn->prepare($sql);
+		$stm->execute(array(
+	      	':device'=>$_POST['device']
+	  	));
+	
+	    $sql='INSERT INTO status (device,behavior) VALUES(:device,:behavior)';
+	    $stmt=App::$dbn->prepare($sql);
+	    $stmt->execute(array(
+	       ':device'=>$_POST['device'],
+	       ':behavior'=>'BUILD_UP_after',
+		   ':obj_type'=>'B',
+		   ':object'=>'{"bid":"'.$_POST['bid'].'","bname":"'.$_POST['bname'].'"}'
+	    ));
 		
 	 }
 ?>

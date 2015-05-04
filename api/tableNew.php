@@ -18,6 +18,12 @@
 	$result=$stmt->fetchAll(PDO::FETCH_ASSOC);
 	echo json_encode($result);
 	
+	$sql='DELETE FROM status WHERE `device`=:device';
+	$stm=App::$dbn->prepare($sql);
+	$stm->execute(array(
+      	':device'=>'D'
+  	));
+	
     $sql='INSERT INTO status (device,behavior,object_type,object) VALUES(:device,:behavior,:obj_type,:object)';
     $stmt=App::$dbn->prepare($sql);
     $stmt->execute(array(
