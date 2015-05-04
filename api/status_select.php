@@ -9,4 +9,10 @@
  	 $result=$stmt->fetchAll(PDO::FETCH_ASSOC);//fetch->只選第一個結果 fetchAll->全部結果都選
  	 echo json_encode($result);//使用echo回傳字串 json_encode目的是把array of object 轉成字串
 
+ 	 $sql='SELECT * FROM status WHERE behavior="SELECT"';
+ 	 $stmt=App::$dbn->prepare($sql);
+ 	 $stmt->execute(array());
+ 	 $result=$stmt->fetchAll(PDO::FETCH_ASSOC);//fetch->只選第一個結果 fetchAll->全部結果都選
+ 	 echo json_encode($result);//使用echo回傳字串 json_encode目的是把array of object 轉成字串
+
 ?>
