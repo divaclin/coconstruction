@@ -11,8 +11,10 @@ class App{
 	static $dbn;
 
 	static function HOST(){
+		$urlStr1='140.119.134.100';
+		$urlStr2='192.168.1.100';
 		$url='http://';
-		$url.='140.119.134.100/co-construction';//$_SERVER['SERVER_NAME'].'8888';
+		$url.=$urlStr1.'/co-construction';//$_SERVER['SERVER_NAME'].'8888';
 		$url.='';
 		return $url;
 		}	

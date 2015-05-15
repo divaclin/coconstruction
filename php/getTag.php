@@ -13,9 +13,10 @@
 		 }
 		 $json.=']';
 		 
+		 
 		 $jsonFile = fopen('tag.json','w+');
 		 fwrite($jsonFile,$json);
 		 fclose($jsonFile);
-		 echo json_encode($result);
+		 echo json_encode($json);
 	}
 ?>

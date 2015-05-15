@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
     <?php HTML::Head('build');?>
-    <body>
+    <body style="position:relative;">
 	<?php PAD::Background('build');?>
 	</body>
 </html>

@@ -268,10 +268,21 @@ $.TokenList = function (input, url_or_data, settings) {
                 case KEY.NUMPAD_ENTER:
                 case KEY.COMMA:
                   if(selected_dropdown_item) {
+					console.log(selected_dropdown_item);   
                     add_token($(selected_dropdown_item).data("tokeninput"));
-                    hidden_input.change();
+                    hidden_input.change();					
                     return false;
                   }
+				  else if($('tester').text()!=""){
+					  console.log($('tester').text());
+					  $('ul.token-input-list-facebook').prepend('<li class="token-input-token-facebook"><p>'+$('tester').text()+'</p><span class="token-input-delete-token-facebook" onclick="removeCustom(this)">×</span></li>');
+					  hidden_input.change();
+					  hidden_input.val("");
+					  $('tester').html("");	
+					  input_box.val("");
+		              hide_dropdown();				  
+					  return false;
+				  }
                   break;
 
                 case KEY.ESCAPE:
