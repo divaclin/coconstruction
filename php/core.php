@@ -132,7 +132,7 @@ class PAD{
 					    self::rightTopBtn($outcome['type']).
 						'<script> localStorage.setItem("status",JSON.stringify('.json_encode($outcome).'));</script>
 						 <div class="infoABox">
- 						   '.self::buildingImgGenerator().                          self::box('infoA',$outcome['bname'],$outcome['cid'],$outcome['content'],$outcome['bid'],$outcome['type'],$outcome['reside'],$outcome['total']).	   
+ 						   '.self::buildingImgGenerator($outcome['iid']).                          self::box('infoA',$outcome['bname'],$outcome['cid'],$outcome['content'],$outcome['bid'],$outcome['type'],$outcome['reside'],$outcome['total']).	   
 						'</div>'.self::Content('modal');
 				 }
 		         break;
@@ -150,7 +150,7 @@ class PAD{
 					     self::rightTopBtn(1).
 	 					'<script> localStorage.setItem("status",JSON.stringify('.json_encode($statusObj).'));</script>
 				         <div class="infoBBox">'
-				             .self::buildingImgGenerator()
+				             .self::buildingImgGenerator($outcome['iid'])
                              .self::box('infoB',$outcome['bname'],$_GET['cid'],$outcome['content'],$outcome['bid'],0,0,0).
 						 '</div>'.self::Content('modal');
 				 }
@@ -220,7 +220,7 @@ class PAD{
 					'<div class="projectBox">
 						 <div class="projectInfoBox"></div>
 			             <div class="infoBBuildingRankP" style="margin:60px 205px 5px 100px;">'.self::InfoBBuildingRank().'</div>'
-			             .self::buildingImgGenerator().
+			             .self::buildingImgGenerator($outcome['iid']).
 						 '<div class="infoBTagRankP" style="margin:15px 205px 5px 100px; padding:35px 0 0 20px;">'.self::InfoBTagRank().'</div>
   			              <div class="projectPop"><label class="TagNumber" data-num="'.$population.'">'.$population.'</label></div>	 
 					 </div>';
@@ -488,7 +488,7 @@ class PAD{
 	  	      $result2=$stmt2->fetch(PDO::FETCH_ASSOC);
 			  $tmp.='<div class="infoCContent">
 		               <div class="infoCText"><a href="infoA.php?bid='.$result2['bid'].'" data-ajax="page=infoA&bid='.$result2['bid'].'" class="toLookUp building">'.$result2['bname'].'</a></div>
-	                   <a href=""><img class="infoCImg" src="img/infoCtest.png"></a>
+	                   <a href="infoA.php?bid='.$result2['bid'].'"><div class="infoCImg" style="background-image:url(\'img/building/'.$result2['iid'].'.png\')"></div></a>
 				       <div class="infoCTag"><div class="infoCinnerBox">';
 			  
 			  $sql3='SELECT * FROM gidtobid  INNER JOIN tag ON tag.gid=gidtobid.gid WHERE bid=:bid';
@@ -531,8 +531,14 @@ class PAD{
 	     return $result;
        }
    }
-   static function buildingImgGenerator(){
-	   return '<div class="infoBBuilding"><div class="infoBBuildingBottom"><div class="infoBBuilgingBottomDecoration"></div></div><div class="infoBBuildingContent"></div></div>';
+   static function buildingImgGenerator($iid){
+	   return '<div class="infoBBuilding">
+		           <div class="infoBBuildingBottom">
+	                  <div class="infoBBuilgingBottomDecoration"></div>
+				   </div>
+				   <div style="background-image:url(\'img/building/'.$iid.'.png\');
+" class="infoBBuildingContent animated fadeIn"></div>
+			   </div>';
    }
 }
    

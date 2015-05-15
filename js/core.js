@@ -22,9 +22,14 @@ $(window).resize(function(){
 });
 function projectHandler(){
    $.post("php/projectInfo.php",{block:true}).done(function (data){
-	   console.log(JSON.parse(data));
-       var t = setTimeout(function(){projectHandler();},3000);	
+	   sessionStorage.setItem("project",data);
+	   if(sessionStorage.getItem("ProjectIndex")==null){
+		   sessionStorage.setItem("ProjectIndex",0);
+	   }
    });
+   var index=parseInt(sessionStorage.getItem("ProjectIndex"));
+   
+   var t = setTimeout(function(){projectHandler();},3000);	
 }
 function pressEffect(){
 	$('.emailBtn').on("mousedown touchstart",function(){
@@ -122,47 +127,64 @@ function startTime(second) {
 function infoBUpdate(cid){
 	$.post("php/getInfoB.php",{cid:cid,block:true}).done(function (data){
 		 sessionStorage.setItem('infoB',data);
-		 sessionStorage.setItm('infoBIndex',0); 	     
-		 console.log(data);
+		 sessionStorage.setItem('infoBIndex',0); 	     
+		// console.log(data);
 	});
 }
 function nextBox(next){
 	     var typeList = $.parseJSON(sessionStorage.getItem('infoB')); 	     
          var current  = sessionStorage.getItem('infoBIndex');
-	     var index=curret+next;
-		 if(index>typeList.length){
-			 sessionStorage.setItm('infoBIndex',0);
+	     var index=parseInt(current)+next;
+		 
+		 if(index>=typeList.length){
+			 sessionStorage.setItem('infoBIndex',0);
 			 index=0; 	     
 		 }
 		 else if(index<0){
-			 sessionStorage.setItm('infoBIndex',typeList.length-1);
+			 sessionStorage.setItem('infoBIndex',typeList.length-1);
 		 	 index=typeList.length-1;
 		 }
+		 else{
+			 sessionStorage.setItem('infoBIndex',index);
+		 }
 		 
+		 $('.infoBBuildingContent').removeClass('fadeIn');
+ 		 $('.infoABBox').removeClass('bounceInRight bounceInLeft');	 		
 		 if(next>0){
-	 		$('.infoABBox').removeClass('bounceInRight bounceInLeft');
-	 		$('.infoABBox').addClass('bounceOutRight');
-			$('.infoABBox').removeClass('bounceOutRight');
-	 		$('.infoABBox').addClass('bounceInLeft');
+			$('.infoABBox').addClass('bounceOutRight');
+			$('.infoBBuildingContent').addClass('fadeOut');
+			var a=setTimeout(function(){
+			                    $('.infoABBox').removeClass('bounceOutRight'); 
+							    $('.infoABBox').addClass('bounceInLeft');
+					  		    $('.infoBBuildingName').html('');
+					  		    $('.infoBBuildingContext').html('');
+					  		    $('.alterTag').html('');
+					  		    $('.infoBBuildingName').html('<a style="color:#fff;" href="infoA.php?bid='+typeList[index]['bid']+'" data-ajax="page=infoA&bid='+typeList[index]['bid']+'">'+typeList[index]['bname']+'</a>');
+					  		    $('.infoBBuildingContext').html(typeList[index]['content']);
+					  		    $('.alterTag').html(typeList[index]['tag']);
+								$('.infoBBuildingContent').css("background-image","url(img/building/"+typeList[index]['iid']+".png)");
+								$('.infoBBuildingContent').removeClass('fadeOut');
+								$('.infoBBuildingContent').addClass('fadeIn');
+						    },1000);
 			
 		 }
 		 else if(next<0){
- 	 		$('.infoABBox').removeClass('bounceInRight bounceInLeft');
- 	 		$('.infoABBox').addClass('bounceOutLeft');
- 			$('.infoABBox').removeClass('bounceOutLeft');
- 	 		$('.infoABBox').addClass('bounceInRight');
-		 }
-		 
-		  $('.infoBBuildingName').html('');
-		  $('.infoBBuildingContext').html('');
-		  $('.alterTag').html('');
-		  $('.infoBBuildingName').html('<a style="color:#fff;" href="infoA.php?bid='+typeList[index]['bid']+'" data-ajax="page=infoA&bid='+typeList[index]['bid']+'">'+typeList[index]['bname']+'</a>');
-		  $('.infoBBuildingContext').html(typeList[index]['content']);
-		  $('.alterTag').html(typeList[index]['tag']);
-		 
-		  $('.infoABBox').removeClass('bounceOutRight');
-		  $('.infoABBox').addClass('bounceInRight');
-		 			               		 
+ 	 		$('.infoABBox').addClass('bounceOutLeft'); 
+			$('.infoBBuildingContent').addClass('fadeOut');			
+			var a=setTimeout(function(){
+				                $('.infoABBox').removeClass('bounceOutLeft');
+ 	 		                    $('.infoABBox').addClass('bounceInRight');
+					  		    $('.infoBBuildingName').html('');
+					  		    $('.infoBBuildingContext').html('');
+					  		    $('.alterTag').html('');
+					  		    $('.infoBBuildingName').html('<a style="color:#fff;" href="infoA.php?bid='+typeList[index]['bid']+'" data-ajax="page=infoA&bid='+typeList[index]['bid']+'">'+typeList[index]['bname']+'</a>');
+					  		    $('.infoBBuildingContext').html(typeList[index]['content']);
+					  		    $('.alterTag').html(typeList[index]['tag']);
+								$('.infoBBuildingContent').css("background-image","url(img/building/"+typeList[index]['iid']+".png)");
+								$('.infoBBuildingContent').removeClass('fadeOut');
+								$('.infoBBuildingContent').addClass('fadeIn');
+		                   },1000);
+		 }		 			               		 
 }
 function uploadEmail(){
 	var usr=document.getElementsByName("emailUsr")[0].value;
