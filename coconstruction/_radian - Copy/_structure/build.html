@@ -1,0 +1,54 @@
+<article class="background" style="background-image:url('img/infoBBackground.gif');">
+
+  <div class="textR textL textTypingL">建造建築物</div>
+
+  <input class="finishBtn" type="button" onclick="finishBuilding()">
+
+  <div class="buildBox">
+
+    <div class="infoBBuilding"></div>
+
+    <div class="buildContainer">
+
+      <form class="buildForm">
+
+        <input class="buildFormName" name="buildingName" type="text" placeholder="請輸入建築物名稱（限七字）..." maxlength="7">
+
+        <select class="buildFormSelect" id="typeSelector">
+
+          <option value="none">請選擇建物類型</option>
+
+          <option value="1">活動類</option>
+
+          <option value="2">服務及餐飲類</option>
+
+          <option value="3">工業類</option>
+
+          <option value="4">休閒娛樂類</option>
+
+          <option value="5">宗教類</option>
+
+          <option value="6">運動類</option>
+
+          <option value="7">法律及安全類</option>
+
+          <option value="8">自然類</option>
+
+          <option value="9">交通類</option>
+
+          <option value="10">教育類</option>
+
+        </select>
+
+        <textarea class="buildFormTextarea" name="buildingContent" placeholder="介紹一下你的建築物吧"></textarea>
+
+        <input class="buildFormTag" name="buildingTag" type="text" placeholder="只要用空格隔開就可以下tag摟，每個tag要小於六個字">
+
+      </form>
+
+    </div>
+
+  </div>
+
+</article>
+

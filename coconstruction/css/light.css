@@ -1,0 +1,21 @@
+body {
+  background-size: 1280px 800px ;
+  position: relative;
+}
+
+.box {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+
+}
+
+.A {
+  background: rgb(250,37,156);
+}
+.B {
+  background: rgb(15,234,51);
+}
+.C {
+  background: rgb(57,238,248);
+}

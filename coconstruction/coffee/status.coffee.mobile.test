@@ -1,0 +1,532 @@
+
+$(document).live 'pageinit',() ->
+  alert 'This page was just enhanced by jQuery Mobile!'
+
+
+  user_id = 15
+  CurrentTestData =
+    B :
+      type : "B"
+      data : [
+        bid: "4",
+        bname: "鵝肉飯建築",
+        content: "說就有",
+        tag: "#吃免錢 #老闆好帥",
+        iid: "1",
+        eid: "2",
+        cid: "2",
+        x: "0",
+        y: "0",
+        type: "2",
+        reside: "323",
+        total: "1000",
+        createdAt: "2015-02-26 15:35:47"
+      ]
+    T :
+      type : "T"
+      data : [
+        bid: "1",
+        bname: "Sexy",
+        content: "I am sexy",
+        tag: "#so_high #高興",
+        iid: "1",
+        eid: "1",
+        cid: "1",
+        x: "0",
+        y: "0",
+        type: "1",
+        reside: "0",
+        total: "0",
+        createdAt: "2015-02-26 15:35:47"
+      ,
+        bid: "2",
+        bname: "帥氣",
+        content: "我是帥氣的建築",
+        tag: "#怎麼這麼帥氣 #都被自己帥醒",
+        iid: "1",
+        eid: "1",
+        cid: "1",
+        x: "0",
+        y: "0",
+        type: "1",
+        reside: "0",
+        total: "0",
+        createdAt: "2015-02-26 15:35:47"
+      ]
+    G :
+      type : "G"
+      data : [
+        bid: "14",
+        bname: "asxcvwe",
+        content: "cdcsdvdvvvsdz",
+        tag: "＃玩到爽",
+        iid: "0",
+        eid: "2",
+        cid: "7",
+        x: "139.7",
+        y: "573.3",
+        type: "0",
+        reside: "0",
+        total: "0",
+        createdAt: "2015-03-05 19:10:04"
+      ,
+        bid: "16",
+        bname: "好好玩遊樂場",
+        content: "哈囉",
+        tag: "#免費 #玩到爽",
+        iid: "0",
+        eid: "2",
+        cid: "4",
+        x: "551.1",
+        y: "926.9",
+        type: "1",
+        reside: "0",
+        total: "0",
+        createdAt: "2015-03-16 18:37:50"
+      ]
+
+
+
+
+
+
+
+  lib =
+    getParameterByName : (name) ->
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]')
+      regex = new RegExp('[\\?&]' + name + '=([^&#]*)')
+      results = regex.exec(location.search)
+      if results == null then '' else decodeURIComponent(results[1].replace(/\+/g, ' '))
+
+  deviceid = lib.getParameterByName("deviceid")
+
+  if deviceid and deviceid.length is 1
+    DEVICE_ID = deviceid
+  else
+    DEVICE_ID = prompt "plz type deviceid"
+
+  $("title").text deviceid
+  LAZY_SECONDS = 10
+  RATE = 170
+  NOTI_TIME = 5
+
+
+  class Controller
+    constructor : (@pad , @db , @notiController) ->
+      @status =
+      @building = undefined
+      main = this
+    _track = () ->
+      db.track(_trackCallback).fail ()->
+        setTimeout _track , RATE
+
+    _isLazy = () ->
+      d = new Date()
+      return ((d.getTime() - _lastMoveTime)/1000) > LAZY_SECONDS
+
+    _trackCallback = (data) ->
+      console.log("tracked.") ;
+      for status in data
+        status = new Status (status)
+        if status.isSelf() and _isLazy()
+          db.clearStatus()
+        if status.isRead() or status.isSelf()
+        else
+          console.log "newed data : " , status
+          noti = new Notification(status)
+          pad.noti(noti)
+          db.markReadStatus(status)
+
+      setTimeout _track , RATE
+
+    track : () ->
+      console.log "start tracking"
+      setTimeout _track , RATE
+
+    init : () ->
+
+      href = "http://140.119.134.100/co-construction/infoA?bid=1"
+      main.wait()
+      $.get href , (data, textStatus, jqXHR) ->
+        pad.$infoA.empty().append(data)
+        data = pad.$infoA.find "phpData"
+        main.lookUp "A" , data
+        pad.navTo(pad.current())
+
+      type = $(this).data("type")
+      main.lookUp("T",JSON.stringify(CurrentTestData.T.data))
+
+    ###
+    ## the most imoortant part !!!
+
+    judge : (status) ->
+      console.log "status.isSelf()" , status.isSelf()
+      if status.isRead() or status.isSelf()
+        return "nothing"
+
+      # 跟自己有關
+      if building && status.isDesk() && status.isBUILD_UP()
+        @buildUp(status)
+        return string = "Build Up a building"
+      else #if status.isDesk() && status.isLOOK_UP
+        noti = new Notification (status)
+        pad.noti(noti)
+                                     ##
+    ###################################
+
+
+    ## 這屬於 本機要寄送的通知
+
+    checkIn : (object) ->
+      #pad.checkIn(object) #api 未修正
+      db.checkIn(object)
+      main.busy()
+
+    buildUp : (status) ->
+      main.busy()
+      if status  # 收到桌子的狀態
+        pad.buildUp(status)
+        db.buildUp(
+
+        ) #要進行新增資料
+        db.lookUp(status)
+
+      else #代表點選按鈕
+        pad.buildUp()
+        db.buildUp()
+        @building = true #等待桌子建造的狀態
+
+    lookUp : (object_type, object ) -> #main.lookup
+      main.busy()
+      db.lookUp(
+        behavior : "LOOK_UP"
+        object_type : object_type
+        object : object
+        , (data)->
+          console.log(data,"pushed")
+        )
+
+    _lastMoveTime = undefined
+
+    busy : () -> #
+      d = new Date()
+      _lastMoveTime = d.getTime()
+
+    wait : () -> #等待頁面 ajax 完成
+
+    isLazy : () ->
+      _isLazy()
+
+
+
+  class Status
+    constructor : (data) ->
+      for attrname of data
+        @[attrname] = data[attrname]
+      @["event"] = @getEvent()
+      console.log @["event"]
+
+    isRead : () ->
+      if @done
+        @done.indexOf(DEVICE_ID) >= 0
+      else
+        false
+    isSelf : () ->
+      @device is DEVICE_ID
+
+    isPad : () ->
+      @device is "A" or @device is "B"  or @device is "C"
+    isDesk : () ->
+      @device is "D"
+    isCHECK_IN : () ->
+      @behavior is "CHECK_IN"
+    isBUILD_UP : () ->
+      @behavior is "BUILD_UP"
+    isBUILD_PRE : () ->
+      @behavior is "BUILD_UP_pre"
+    isBUILD_AFTER : () ->
+      @behavior is "BUILD_UP_after"
+    isLOOK_UP : () ->
+      @behavior is "LOOK_UP"
+    isBUILD_UP_return : () ->
+      @behavior is "BUILD_UP_return"
+    liveTime : () ->
+      o = new Date(@time)
+      d = new Date()
+      Math.ceil((d.getTime() - o.getTime()) /1000)
+
+
+    getEvent : () ->
+      if @isSelf()
+        return "self"
+      if @isPad()
+        if @isBUILD_UP()
+          if @object_type
+            return "otherPad.buildUp"
+          else
+            return "otherPad.building"
+        if @isCHECK_IN()
+          return "otherPad.checkIn"
+
+        if @isLOOK_UP()
+          return "otherPad.lookUp.building" if @object_type is "B"
+          return "otherPad.lookUp.type" if @object_type is "T"
+          return "otherPad.lookUp.tag" if @object_type is "G"
+
+      else if @isDesk()
+        return "desk.lookUp" if @isLOOK_UP()
+        return "desk.building" if @isBUILD_UP_return
+
+      else
+        return "unsolve"
+  class DB
+    constructor : () ->
+
+    pull : (url , callback) ->
+      # 抓下後 upadate "done" with "deviceID"
+      $.get(url,callback).fail((j,s,e) ->
+        console.log(j.responseText,s,e)
+      )
+
+    push : (url,data,callback) ->
+      # 這裡要推資料上去，會return true (accept) 或 false(refuse)
+      $.post(url,data).done(callback)
+
+    clearStatus : (match,callback) ->
+      console.clear()
+      if !callback
+        callback = () ->
+      console.log callback
+      if !match
+        @push "data/clearStatus.php" ,
+          device : DEVICE_ID
+        , (data,textStatus) ->
+          callback()
+          console.log(data , textStatus ,"Status of #{DEVICE_ID} is deleted.")
+      else if match.statusid
+        @push "data/clearStatus.php" ,
+          statusid : match.statusid , (data,textStatus) ->
+          callback()
+          console.log(textStatus ,"Status #{status.statusid} is deleted.")
+
+
+    markReadStatus : (status) ->
+      data =
+        done : DEVICE_ID
+        statusid : status.statusid
+      @push "data/updateStatus.php" , data , () ->
+        console.log("Status #{status.statusid} is mark read.")
+
+    addStatus : (data,callback) ->
+      _addStatus = ()->
+        console.log this
+        @push "data/addStatus.php" ,
+          deviceid : DEVICE_ID
+          behavior : data.behavior
+          object_type : data.object_type
+          object : data.object
+          time: new Date()
+         , () ->
+           if callback then callback()
+           console.log("#{data.behavior}")
+
+      @clearStatus().success _addStatus.bind this
+    # 要新增建築資料
+    buildUp : (object,callback) ->
+      if object #現在回傳資料
+        @addStatus
+          behavior :"BUILD_UP"
+        ,callback
+
+    buildUpAfter : () ->
+      @push "data/buildUp.php",object,callback
+      @addStatus(
+        behavior : "BUILD_UP_after"
+        object_type : "B"
+        object : object
+      ,callback)
+
+
+    buildUpPre : (callback) ->
+      @addStatus
+        behavior : "BUILD_UP_pre"
+      ,callback
+
+    checkIn : (object,callback) ->
+      @push "data/checkIn.php",
+        object : object
+        object_type : "B"
+        user : user_id
+      ,callback # 這裡要去推資料進去資料庫
+      @addStatus(
+        behavior : "CHECK_IN"
+        object_type : "B"
+        object : object
+      , callback)
+
+    lookUp : (data, callback) ->
+      #[] # 這時候要去拉資料回來
+      @addStatus data , callback
+
+    track : (callback) ->
+      @pull "data/pullStatus.php" , callback
+      #loop setTimeout track , 800  # 這個之後會用 ajax.done(_trackingDB) 取代
+
+
+  class Pad
+
+    $body = $ "body"
+    $notiContainer = $ "#notiContainer"
+
+
+
+    constructor : (@id) ->
+
+      @$infoA = $ "#INFO_A"
+      @$infoB = $ "#INFO_B"
+      @$infoC = $ "#INFO_C"
+
+      @$infoC = $ "#BUILD"
+
+
+
+    noti : (noti) ->
+      console.log("apd",noti);
+
+      noti.appendTo("#notiContainer").fadeIn()
+
+      setTimeout(()->
+        noti.fadeOut()
+      , NOTI_TIME * 1000)
+
+    navTo : (padObject) ->
+      $(".active").not(padObject).fadeOut()
+      padObject.fadeIn () ->
+        padObject.addClass("active")
+
+    currentPage : () ->
+      a = $(".Page.active")
+      console.log a.length , a
+      a
+
+
+
+
+    checkIn : () ->
+
+    buildUp : () ->
+
+
+
+
+
+
+  class Notification
+    _getNotiStructure = (noti) ->
+      """
+        <a class="noti #{noti[1]}" href="#{noti[2]}">
+          <p>#{noti[0]}</p>
+        </a>
+      """
+
+    constructor : (status) ->
+      objString = @object2String (status.object)
+      @deviceid = status.device
+      data = @getData(status.event)
+      console.log data
+      jq = $ _getNotiStructure(data)
+      $.extend @ , jq
+
+
+
+      #[通知內文, class , href ]
+
+    getData : (event)->
+      id = @deviceid
+      switch event
+
+        when "otherPad.building"
+        then ["平板#{id}正在建造建築中！" , "from#{id} noClick" , "url"]
+        when "otherPad.buildUp"
+        then ["平板#{id}建造了！" , "from#{id} toLookUp building" , "url"]
+
+        when "otherPad.checkIn"
+        then ["平板#{id}入住了一棟建築物！" , "from#{id} toLookUp building" , "url"]
+
+        when "otherPad.lookUp.building"
+        then ["平板#{id}正在查找建築！" , "from#{id} toLookUp building" , "url" ]
+        when "otherPad.lookUp.type"
+        then ["平板#{id}正在查找類別！" , "from#{id} toLookUp type" , "url" ]
+        when "otherPad.lookUp.tag"
+        then ["平板#{id}正在查找標簽！" , "from#{id} toLookUp tag" , "url" ]
+
+        when "desk.lookUp"
+        then ["桌上有一筆查詢", "from#{id} toLookUp building" , "url" ]
+        when "desk.building" # 回傳建造資料的時候
+        then ["桌上有一筆建造", "from#{id} toLookUp building" , "url" ]
+
+        when "unsolve"
+        then ["有一筆未處理的狀態來自#{id}", "from#{id} " , "url" ]
+    object2String : (object) ->
+      switch object[1]
+        when "B" then "建築#{status.object[1]}"
+        when "T" then "建築類型#{status.object[1]}"
+        when "G" then "建築標簽#{status.object[1]}"
+
+
+
+
+
+
+
+  pad = new Pad()
+  db = new DB()
+  main = new Controller(pad,db);
+  main.track();
+
+
+
+
+  ## 3.31 for ㄌㄑtest
+
+
+
+
+  $(document).on "click" , ".toBuildUp" , (e) ->
+
+    main.buildUp()
+
+
+  $(document).on "click" , ".toCheckIn" , (e) ->
+    bid = $(this).data("bid")
+    main.checkIn(JSON.stringify(CurrentTestData.B.data))
+  $(document).on "click" ,".toLookUp.building" , (e) ->
+    href = "http://140.119.134.100/co-construction/#{$(this).data("href")}"
+    main.wait()
+    $.get href , (data, textStatus, jqXHR) ->
+      pad.$infoA.empty().append(data)
+      data = pad.$infoA.find("#phpData").val()
+      main.lookUp "B" , data
+      pad.navTo(pad.$infoA)
+    type = $(this).data("type")
+
+    main.lookUp("B",JSON.stringify(CurrentTestData.B.data))
+
+  $(document).on "click" , ".toLookUp.type" , (e) ->
+    console.log "type"
+    href = "http://140.119.134.100/co-construction/#{$(this).data("href")}"
+    main.wait()
+    $.get href , (data, textStatus, jqXHR) ->
+      pad.$infoB.empty().append(data)
+      data = pad.$infoB.find("#phpData").val()
+      main.lookUp "T" , data
+      pad.navTo(pad.$infoB)
+    type = $(this).data("type")
+    #main.lookUp("T",JSON.stringify(CurrentTestData.T.data))
+
+  $(document).on "click" , ".toLookUp.tag" , (e) ->
+    tag = $(this).data("tag")
+    main.lookUp("G",JSON.stringify(CurrentTestData.G.data))
+
+  $(document).on "click" , ".noti" , (e) ->
+    action = $(this).data("action") # action 還沒設定

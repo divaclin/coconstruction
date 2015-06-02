@@ -1,0 +1,18 @@
+Status
+==========
+device ABC D U W
+action "LOOK_UP" "BUILD_UP" "CHECK IN"
+
+object_type : "B" "T" "G"
+object_id : bid , tid , "#天"
+object_json : [{}] , [{},{}]
+
+done : ABC D U W
+event :
+time
+statusid : index key
+
+
+
+
+建造回傳回來的訊息是~ 

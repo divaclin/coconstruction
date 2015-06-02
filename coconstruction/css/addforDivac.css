@@ -1,0 +1,102 @@
+body {
+  position: relative;
+  min-height: 768px;
+  background: rgb(3,16,34)
+}
+.r_background video {
+  position: absolute;
+  z-index: 0;
+  /*display: none;*/
+}
+.navToInfoB{
+  cursor: pointer ;
+}
+.Page {
+  position : absolute ;
+  height: 768px;
+  width: 1024px;
+  overflow: hidden;
+}
+#notiContainer{
+  z-index : 100 ;
+  position : absolute ;
+  left: 0;
+  bottom: 0;
+
+  width:0;
+  overflow: visible;
+  margin-bottom: 20px;
+}
+
+
+.noti {
+  position : relative ;
+  color : white ;
+  margin : 15px;
+  border-radius : 5px ;
+  background-image: url("../img/information.png");
+  background-size: 200px 70px ;
+  display : block ;
+  border: solid white 1px ;
+  padding : 10px;
+  width : 200px ;
+  height: 70px;
+}
+.noti:hover {
+  cursor : pointer ;
+}
+.noti span.close{
+  position: absolute ;
+  right : 0 ;
+  top : 0 ;
+  width: 30px;
+  height: 30px;
+  background: rgba(200,0,0,.8);
+  border-radius: 50%;
+}
+
+.noti span.A{
+  color : rgb(250,37,156);
+}
+.noti span.B{
+  color : rgb(15,234,51);
+}
+.noti span.C{
+  color : rgb(57,238,248);
+}
+.noti span.D{
+  color : rgb(200,200,200);
+}
+
+
+
+#phpData {
+  display : none ;
+}
+
+#clickCover {
+  width: 1024px;
+  height: 768px;
+  background: rgba(0,0,0,.7);
+  position: absolute;
+  text-align: center;
+  line-height: 768px ;
+}
+
+#clickCover > img {
+  display: inline ;
+
+}
+#clickCover.active {
+  z-index: 30000 ;
+}
+
+#clickAudio {
+  display: none ;
+  position: absolute;
+  left: -1000px;
+}
+/* background for infoA B C*/
+/*video {
+  position: absolute;
+}*/

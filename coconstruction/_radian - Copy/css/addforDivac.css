@@ -1,0 +1,58 @@
+body {
+  position: relative;
+  min-height: 768px;
+}
+
+.navToInfoB{
+  cursor: pointer ;
+}
+
+.r_background {
+  _background: black ;
+  width: 100%;
+  min-height: 600px;
+
+}
+.Page {
+  position : absolute ;
+}
+.Page video {
+  displa: none;
+}
+#notiContainer{
+  z-index : 9999 ;
+  position : absolute ;
+  left: 0;
+  bottom: 0;
+
+  width:0;
+  overflow: visible;
+  margin-bottom: 20px;
+}
+
+
+.noti {
+  position : relative ;
+  color : white ;
+  margin : 15px;
+  border-radius : 5px ;
+  background-image: url("../img/information.png");
+  background-size: 200px 70px ;
+  display : block ;
+  border: solid white 1px ;
+  padding : 10px;
+  width : 200px ;
+  height: 70px;
+}
+.noti:hover {
+  cursor : pointer ;
+}
+#phpData {
+  display : none ;
+}
+
+
+/* background for infoA B C*/
+video {
+  position: absolute;
+}

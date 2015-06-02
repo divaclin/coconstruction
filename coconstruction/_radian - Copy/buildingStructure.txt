@@ -1,0 +1,12 @@
+一棟建築
+bid
+bname
+content
+tag
+iid
+eid
+cid
+type
+reside
+total
+createdAt
